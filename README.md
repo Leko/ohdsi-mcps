@@ -4,36 +4,38 @@ A collection of MCP (Model Context Protocol) servers for OHDSI/OMOP users.
 
 ## Available MCP Servers
 
-| Server | Description | Source |
-|--------|-------------|--------|
-| **CDM Specification** | OMOP CDM v5.4 table/field specifications | This repository |
-| **OHDSI Forum** | Search and read OHDSI Forum discussions | [@discourse/mcp](https://github.com/discourse/discourse-mcp) |
+| Server | Command | Description |
+|--------|---------|-------------|
+| **CDM Specification** | `npx ohdsi-mcps` | OMOP CDM v5.4 table/field specifications |
+| **OHDSI Forum** | `npx @discourse/mcp --site https://forums.ohdsi.org` | Search and read OHDSI Forum discussions |
 
-## Setup Guide
-
-### CDM Specification MCP
+## CDM Specification MCP
 
 Provides access to OMOP Common Data Model v5.4 specifications including table schemas, field definitions, and ETL conventions.
 
-#### Available Resources
+### Resources
 
-- `cdm://tables` - List all CDM tables
-- `cdm://tables/{tableName}` - Get table details and fields
-- `cdm://tables/{tableName}/fields/{fieldName}` - Get field details
+| URI | Description |
+|-----|-------------|
+| `cdm://tables` | List all CDM tables |
+| `cdm://tables/{tableName}` | Get table details and fields |
+| `cdm://tables/{tableName}/fields/{fieldName}` | Get field details |
 
-### OHDSI Forum MCP
+## OHDSI Forum MCP
 
-Uses the official Discourse MCP to search and read posts from [OHDSI Forum](https://forums.ohdsi.org/).
+Uses the official [Discourse MCP](https://github.com/discourse/discourse-mcp) to search and read posts from [OHDSI Forum](https://forums.ohdsi.org/). No authentication required for read-only access.
 
-#### Available Tools
+### Tools
 
-- `discourse_search` - Search topics and posts
-- `discourse_read_topic` - Read topic content
-- `discourse_read_post` - Read specific post
-- `discourse_filter_topics` - Advanced topic filtering
-- `discourse_get_user` - Get user information
+| Tool | Description |
+|------|-------------|
+| `discourse_search` | Search topics and posts |
+| `discourse_read_topic` | Read topic content |
+| `discourse_read_post` | Read specific post |
+| `discourse_filter_topics` | Advanced topic filtering |
+| `discourse_get_user` | Get user information |
 
-## Configuration by Platform
+## Setup
 
 ### Claude Desktop
 
@@ -42,13 +44,13 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) o
 ```json
 {
   "mcpServers": {
-    "cdm-spec": {
+    "ohdsi-cdm": {
       "command": "npx",
-      "args": ["tsx", "/path/to/ohdsi-mcps/src/cdm/index.ts"]
+      "args": ["-y", "ohdsi-mcps"]
     },
     "ohdsi-forum": {
       "command": "npx",
-      "args": ["-y", "@discourse/mcp@latest", "--site", "https://forums.ohdsi.org"]
+      "args": ["-y", "@discourse/mcp", "--site", "https://forums.ohdsi.org"]
     }
   }
 }
@@ -61,13 +63,13 @@ Edit `~/.claude/settings.json`:
 ```json
 {
   "mcpServers": {
-    "cdm-spec": {
+    "ohdsi-cdm": {
       "command": "npx",
-      "args": ["tsx", "/path/to/ohdsi-mcps/src/cdm/index.ts"]
+      "args": ["-y", "ohdsi-mcps"]
     },
     "ohdsi-forum": {
       "command": "npx",
-      "args": ["-y", "@discourse/mcp@latest", "--site", "https://forums.ohdsi.org"]
+      "args": ["-y", "@discourse/mcp", "--site", "https://forums.ohdsi.org"]
     }
   }
 }
@@ -75,37 +77,18 @@ Edit `~/.claude/settings.json`:
 
 ### VS Code (GitHub Copilot)
 
-Edit `.vscode/mcp.json` in your workspace or user settings:
+Edit `.vscode/mcp.json` in your workspace:
 
 ```json
 {
   "servers": {
-    "cdm-spec": {
+    "ohdsi-cdm": {
       "command": "npx",
-      "args": ["tsx", "/path/to/ohdsi-mcps/src/cdm/index.ts"]
+      "args": ["-y", "ohdsi-mcps"]
     },
     "ohdsi-forum": {
       "command": "npx",
-      "args": ["-y", "@discourse/mcp@latest", "--site", "https://forums.ohdsi.org"]
-    }
-  }
-}
-```
-
-### Gemini CLI
-
-Edit `~/.gemini/settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "cdm-spec": {
-      "command": "npx",
-      "args": ["tsx", "/path/to/ohdsi-mcps/src/cdm/index.ts"]
-    },
-    "ohdsi-forum": {
-      "command": "npx",
-      "args": ["-y", "@discourse/mcp@latest", "--site", "https://forums.ohdsi.org"]
+      "args": ["-y", "@discourse/mcp", "--site", "https://forums.ohdsi.org"]
     }
   }
 }
@@ -118,13 +101,13 @@ Edit `~/.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
-    "cdm-spec": {
+    "ohdsi-cdm": {
       "command": "npx",
-      "args": ["tsx", "/path/to/ohdsi-mcps/src/cdm/index.ts"]
+      "args": ["-y", "ohdsi-mcps"]
     },
     "ohdsi-forum": {
       "command": "npx",
-      "args": ["-y", "@discourse/mcp@latest", "--site", "https://forums.ohdsi.org"]
+      "args": ["-y", "@discourse/mcp", "--site", "https://forums.ohdsi.org"]
     }
   }
 }
@@ -137,13 +120,32 @@ Edit `~/.codeium/windsurf/mcp_config.json`:
 ```json
 {
   "mcpServers": {
-    "cdm-spec": {
+    "ohdsi-cdm": {
       "command": "npx",
-      "args": ["tsx", "/path/to/ohdsi-mcps/src/cdm/index.ts"]
+      "args": ["-y", "ohdsi-mcps"]
     },
     "ohdsi-forum": {
       "command": "npx",
-      "args": ["-y", "@discourse/mcp@latest", "--site", "https://forums.ohdsi.org"]
+      "args": ["-y", "@discourse/mcp", "--site", "https://forums.ohdsi.org"]
+    }
+  }
+}
+```
+
+### Gemini CLI
+
+Edit `~/.gemini/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "ohdsi-cdm": {
+      "command": "npx",
+      "args": ["-y", "ohdsi-mcps"]
+    },
+    "ohdsi-forum": {
+      "command": "npx",
+      "args": ["-y", "@discourse/mcp", "--site", "https://forums.ohdsi.org"]
     }
   }
 }
@@ -151,19 +153,21 @@ Edit `~/.codeium/windsurf/mcp_config.json`:
 
 ## Requirements
 
-- Node.js 24+ (see `.nvmrc`)
-- For OHDSI Forum MCP: `@discourse/mcp` requires Node.js 24+
+- Node.js 24+
 
 ## Development
 
-### npm scripts
+```bash
+npm install
+npm run build
+npm test
+```
 
 | Script | Description |
 |--------|-------------|
-| `npm run build` | TypeScript type check (no emit) |
-| `npm test` | Run tests with vitest |
-| `npm run test:coverage` | Run tests with coverage report |
-| `npm run cdm` | Start the CDM specification MCP server |
+| `npm run build` | Build TypeScript to dist/ |
+| `npm test` | Run tests |
+| `npm run cdm` | Start CDM MCP server (dev mode) |
 
 ## License
 
