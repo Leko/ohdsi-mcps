@@ -59,7 +59,7 @@ export interface ConceptRelationship {
   vocabulary_id_2: string;
 }
 
-// Search types
+// Search types - Note: search API returns data as direct array
 export interface SearchResult {
   concept_id: number;
   concept_name: string;
@@ -71,33 +71,47 @@ export interface SearchResult {
   valid_start_date: string;
   valid_end_date: string;
   invalid_reason: string | null;
-  match_score: number;
-  match_type: "exact" | "partial" | "fuzzy" | "semantic";
-}
-
-export interface SearchResponse {
-  concepts: SearchResult[];
 }
 
 // Hierarchy types
 export interface AncestorConcept extends Concept {
+  level?: number;
   min_levels_of_separation?: number;
   max_levels_of_separation?: number;
+  relationship_id?: string;
+  relationship_name?: string;
 }
 
 export interface DescendantConcept extends Concept {
+  level?: number;
   min_levels_of_separation?: number;
   max_levels_of_separation?: number;
+  relationship_id?: string;
+  relationship_name?: string;
 }
 
-export interface HierarchyResponse {
-  concepts: AncestorConcept[] | DescendantConcept[];
-  hierarchy_summary?: {
-    total_count: number;
-    max_depth: number;
-    vocabularies: string[];
-    relationship_types: string[];
-  };
+export interface HierarchySummary {
+  total_ancestors?: number;
+  total_descendants?: number;
+  max_hierarchy_depth?: number;
+  unique_vocabularies?: string[];
+  relationship_types_used?: string[];
+}
+
+export interface AncestorsResponse {
+  concept_id: number;
+  concept_name: string;
+  vocabulary_id: string;
+  ancestors: AncestorConcept[];
+  hierarchy_summary?: HierarchySummary;
+}
+
+export interface DescendantsResponse {
+  concept_id: number;
+  concept_name: string;
+  vocabulary_id: string;
+  descendants: DescendantConcept[];
+  hierarchy_summary?: HierarchySummary;
 }
 
 // Mapping types

@@ -6,10 +6,10 @@
 import type {
   ApiResponse,
   OmopHubClientOptions,
-  Concept,
   ConceptDetail,
-  SearchResponse,
-  HierarchyResponse,
+  SearchResult,
+  AncestorsResponse,
+  DescendantsResponse,
   MappingResponse,
   VocabulariesResponse,
   RelationshipTypesResponse,
@@ -87,11 +87,12 @@ export class OmopHubClient {
 
   /**
    * Search for concepts across vocabularies
+   * Note: API returns data as direct array of SearchResult
    */
   async searchConcepts(
     input: SearchConceptsInput
-  ): Promise<ApiResponse<SearchResponse>> {
-    return this.request<SearchResponse>("GET", "/search/concepts", {
+  ): Promise<ApiResponse<SearchResult[]>> {
+    return this.request<SearchResult[]>("GET", "/search/concepts", {
       query: input.query,
       vocabulary_ids: input.vocabulary_ids,
       domain_ids: input.domain_ids,
@@ -120,8 +121,8 @@ export class OmopHubClient {
    */
   async getAncestors(
     input: GetAncestorsInput
-  ): Promise<ApiResponse<HierarchyResponse>> {
-    return this.request<HierarchyResponse>(
+  ): Promise<ApiResponse<AncestorsResponse>> {
+    return this.request<AncestorsResponse>(
       "GET",
       `/concepts/${input.concept_id}/ancestors`,
       {
@@ -141,8 +142,8 @@ export class OmopHubClient {
    */
   async getDescendants(
     input: GetDescendantsInput
-  ): Promise<ApiResponse<HierarchyResponse>> {
-    return this.request<HierarchyResponse>(
+  ): Promise<ApiResponse<DescendantsResponse>> {
+    return this.request<DescendantsResponse>(
       "GET",
       `/concepts/${input.concept_id}/descendants`,
       {

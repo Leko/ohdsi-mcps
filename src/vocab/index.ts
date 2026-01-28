@@ -38,9 +38,6 @@ function formatSearchResults(concepts: SearchResult[]): string {
     lines.push(
       `- **Standard:** ${concept.standard_concept === "S" ? "Yes" : "No"}`
     );
-    lines.push(
-      `- **Match:** ${concept.match_type} (score: ${concept.match_score.toFixed(2)})`
-    );
     lines.push("");
   }
 
@@ -264,7 +261,7 @@ async function main() {
         content: [
           {
             type: "text",
-            text: formatSearchResults(response.data.concepts),
+            text: formatSearchResults(response.data),
           },
         ],
       };
@@ -354,7 +351,7 @@ async function main() {
         content: [
           {
             type: "text",
-            text: formatHierarchy(response.data.concepts, "ancestors"),
+            text: formatHierarchy(response.data.ancestors, "ancestors"),
           },
         ],
       };
@@ -406,7 +403,7 @@ async function main() {
         content: [
           {
             type: "text",
-            text: formatHierarchy(response.data.concepts, "descendants"),
+            text: formatHierarchy(response.data.descendants, "descendants"),
           },
         ],
       };
