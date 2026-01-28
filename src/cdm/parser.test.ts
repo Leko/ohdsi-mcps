@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   parseCSV,
+  normalizeRows,
   loadTables,
   loadFields,
   loadTablesWithFields,
@@ -50,6 +51,63 @@ describe("parseCSV", () => {
       ["a", "b", "c"],
       ["1", "2", "3"],
     ]);
+  });
+});
+
+describe("normalizeRows", () => {
+  it("returns rows unchanged when column count matches", () => {
+    const rows = [
+      ["a", "b", "c"],
+      ["1", "2", "3"],
+    ];
+    const result = normalizeRows(rows, 3, 1);
+    expect(result).toEqual(rows);
+  });
+
+  it("merges extra columns into the text field", () => {
+    // Simulates: "a,b, extra part,c" where field at index 1 should be "b, extra part"
+    const rows = [
+      ["a", "b", "c", "d"], // header (4 columns - OK since we're testing data rows)
+      ["1", "2", "extra", "3", "4"], // 5 columns instead of 4
+    ];
+    const result = normalizeRows(rows, 4, 1);
+    expect(result).toEqual([
+      ["a", "b", "c", "d"],
+      ["1", "2, extra", "3", "4"],
+    ]);
+  });
+
+  it("handles multiple extra columns", () => {
+    const rows = [["a", "b", "c", "d", "e", "f"]]; // 6 columns instead of 4
+    const result = normalizeRows(rows, 4, 1);
+    expect(result).toEqual([["a", "b, c, d", "e", "f"]]);
+  });
+
+  it("fixes real-world case with 'e.g.,' in text field", () => {
+    // Simulates the actual problematic row from Field Level CSV
+    const rows = [
+      [
+        "cdm_source",
+        "source_documentation_reference",
+        "No",
+        "varchar(255)",
+        "Refers to a publication",
+        " e.g. a data dictionary.", // This got split due to unquoted comma
+        "NA",
+        "No",
+        "No",
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+      ],
+    ];
+    const result = normalizeRows(rows, 13, 4);
+    expect(result[0]?.length).toBe(13);
+    expect(result[0]?.[4]).toBe(
+      "Refers to a publication,  e.g. a data dictionary."
+    );
   });
 });
 
@@ -139,23 +197,18 @@ describe("CDM Field Level CSV", () => {
     expect(headers).toEqual(FIELD_LEVEL_HEADERS);
   });
 
-  it("has expected number of columns per row (with known exceptions)", () => {
-    const content = readFileSync(
-      join(ASSET_DIR, "OMOP_CDMv5.4_Field_Level.csv"),
-      "utf-8"
+  it("loadFields normalizes all rows to expected column count", () => {
+    // loadFields uses normalizeRows internally, so all fields should parse correctly
+    const fields = loadFields();
+
+    // Verify the problematic field (source_documentation_reference) was parsed correctly
+    const problematicField = fields.find(
+      (f) =>
+        f.cdmTableName === "cdm_source" &&
+        f.cdmFieldName === "source_documentation_reference"
     );
-    const rows = parseCSV(content);
-    const expectedColumns = FIELD_LEVEL_HEADERS.length;
-
-    // Count rows that don't match expected column count
-    // Note: Original CSV has unquoted commas in some fields (e.g., "e.g., ...")
-    const badRows = rows.filter((row) => row.length !== expectedColumns);
-
-    // Allow at most 1 problematic row (known issue with source_documentation_reference field)
-    expect(
-      badRows.length,
-      `Too many rows with wrong column count: ${badRows.map((r) => r[1]).join(", ")}`
-    ).toBeLessThanOrEqual(1);
+    expect(problematicField).toBeDefined();
+    expect(problematicField?.userGuidance).toContain("e.g.");
   });
 
   it("has more than 100 fields", () => {

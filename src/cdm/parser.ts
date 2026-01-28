@@ -61,6 +61,39 @@ export function parseCSV(content: string): string[][] {
   return rows;
 }
 
+/**
+ * Fix rows that have extra columns due to unquoted commas in text fields.
+ * Merges extra columns back into the text field at the specified index.
+ *
+ * @param rows - Parsed CSV rows
+ * @param expectedColumns - Expected number of columns
+ * @param textFieldIndex - Index of the text field that may contain unquoted commas
+ * @returns Fixed rows with correct column count
+ */
+export function normalizeRows(
+  rows: string[][],
+  expectedColumns: number,
+  textFieldIndex: number
+): string[][] {
+  return rows.map((row) => {
+    if (row.length <= expectedColumns) {
+      return row;
+    }
+
+    // Calculate how many extra columns we have
+    const extraColumns = row.length - expectedColumns;
+
+    // Merge the extra columns back into the text field
+    const before = row.slice(0, textFieldIndex);
+    const merged = row
+      .slice(textFieldIndex, textFieldIndex + extraColumns + 1)
+      .join(", ");
+    const after = row.slice(textFieldIndex + extraColumns + 1);
+
+    return [...before, merged, ...after];
+  });
+}
+
 function parseBoolean(value: string): boolean {
   return value.toLowerCase() === "yes";
 }
@@ -114,7 +147,14 @@ export function loadFields(): CdmField[] {
     join(ASSET_DIR, "OMOP_CDMv5.4_Field_Level.csv"),
     "utf-8"
   );
-  const rows = parseCSV(content);
+  const rawRows = parseCSV(content);
+
+  // Field Level CSV has 13 columns, and the userGuidance field (index 4)
+  // may contain unquoted commas (e.g., "e.g., something")
+  const EXPECTED_COLUMNS = 13;
+  const USER_GUIDANCE_INDEX = 4;
+  const rows = normalizeRows(rawRows, EXPECTED_COLUMNS, USER_GUIDANCE_INDEX);
+
   const headers = rows[0];
 
   if (!headers) {
