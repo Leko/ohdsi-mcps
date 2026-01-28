@@ -17,10 +17,10 @@
     "prepublishOnly": "npm run build",
     "cdm": "tsx src/cdm/index.ts",
     "vocab": "tsx --env-file=.env src/vocab/index.ts",
-    "test": "vitest run",
+    "test": "vitest run --exclude src/vocab/",
     "test:vocab": "vitest run src/vocab/",
     "test:vocab:local": "node --env-file=.env node_modules/vitest/vitest.mjs run src/vocab/",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage --exclude src/vocab/"
   },
   "repository": "github:Leko/ohdsi-mcps",
   "keywords": [
