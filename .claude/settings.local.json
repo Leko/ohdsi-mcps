@@ -7,7 +7,9 @@
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nfix: Align API client with actual OMOPHub API response format\n\n- search/concepts returns data as direct array \\(not data.concepts\\)\n- ancestors endpoint returns data.ancestors \\(not data.concepts\\)\n- descendants endpoint returns data.descendants \\(not data.concepts\\)\n- Remove unused match_score/match_type from SearchResult type\n- Update tests to match actual API behavior\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git push:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh run list:*)"
     ]
   }
 }
