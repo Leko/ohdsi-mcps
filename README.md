@@ -6,7 +6,7 @@ A collection of MCP (Model Context Protocol) servers for OHDSI/OMOP users.
 
 | Server | Command | Description |
 |--------|---------|-------------|
-| **CDM Specification** | `npx ohdsi-mcps` | OMOP CDM v5.4 table/field specifications |
+| **CDM Specification** | `npx ohdsi-cdm-mcp` | OMOP CDM v5.4 table/field specifications |
 | **OHDSI Forum** | `npx @discourse/mcp --site https://forums.ohdsi.org` | Search and read OHDSI Forum discussions |
 
 ## CDM Specification MCP
@@ -46,7 +46,7 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) o
   "mcpServers": {
     "ohdsi-cdm": {
       "command": "npx",
-      "args": ["-y", "ohdsi-mcps"]
+      "args": ["-y", "ohdsi-cdm-mcp"]
     },
     "ohdsi-forum": {
       "command": "npx",
@@ -65,7 +65,7 @@ Edit `~/.claude/settings.json`:
   "mcpServers": {
     "ohdsi-cdm": {
       "command": "npx",
-      "args": ["-y", "ohdsi-mcps"]
+      "args": ["-y", "ohdsi-cdm-mcp"]
     },
     "ohdsi-forum": {
       "command": "npx",
@@ -84,7 +84,7 @@ Edit `.vscode/mcp.json` in your workspace:
   "servers": {
     "ohdsi-cdm": {
       "command": "npx",
-      "args": ["-y", "ohdsi-mcps"]
+      "args": ["-y", "ohdsi-cdm-mcp"]
     },
     "ohdsi-forum": {
       "command": "npx",
@@ -103,7 +103,7 @@ Edit `~/.cursor/mcp.json`:
   "mcpServers": {
     "ohdsi-cdm": {
       "command": "npx",
-      "args": ["-y", "ohdsi-mcps"]
+      "args": ["-y", "ohdsi-cdm-mcp"]
     },
     "ohdsi-forum": {
       "command": "npx",
@@ -122,7 +122,7 @@ Edit `~/.codeium/windsurf/mcp_config.json`:
   "mcpServers": {
     "ohdsi-cdm": {
       "command": "npx",
-      "args": ["-y", "ohdsi-mcps"]
+      "args": ["-y", "ohdsi-cdm-mcp"]
     },
     "ohdsi-forum": {
       "command": "npx",
@@ -141,7 +141,7 @@ Edit `~/.gemini/settings.json`:
   "mcpServers": {
     "ohdsi-cdm": {
       "command": "npx",
-      "args": ["-y", "ohdsi-mcps"]
+      "args": ["-y", "ohdsi-cdm-mcp"]
     },
     "ohdsi-forum": {
       "command": "npx",
