@@ -1,0 +1,22 @@
+{
+  "name": "ohdsi-mcps",
+  "version": "1.0.0",
+  "description": "A collection of MCP server for OMOP users (ex. CDM specification, the book of ohdsi, forum, athena)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:37459/git/Leko/ohdsi-mcps"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^25.0.10",
+    "prettier": "^3.8.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
