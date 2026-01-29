@@ -18,7 +18,7 @@ import type {
 /**
  * Format search results as Markdown
  */
-function formatSearchResults(concepts: SearchResult[]): string {
+export function formatSearchResults(concepts: SearchResult[]): string {
   if (concepts.length === 0) {
     return "No concepts found matching your query.";
   }
@@ -47,7 +47,7 @@ function formatSearchResults(concepts: SearchResult[]): string {
 /**
  * Format concept detail as Markdown
  */
-function formatConceptDetail(concept: ConceptDetail): string {
+export function formatConceptDetail(concept: ConceptDetail): string {
   const lines: string[] = [];
 
   lines.push(`# ${concept.concept_name}`);
@@ -94,7 +94,7 @@ function formatConceptDetail(concept: ConceptDetail): string {
 /**
  * Format hierarchy results as Markdown
  */
-function formatHierarchy(
+export function formatHierarchy(
   concepts: (AncestorConcept | DescendantConcept)[],
   direction: "ancestors" | "descendants"
 ): string {
@@ -124,7 +124,7 @@ function formatHierarchy(
 /**
  * Format mappings as Markdown
  */
-function formatMappings(mappings: ConceptMapping[]): string {
+export function formatMappings(mappings: ConceptMapping[]): string {
   if (mappings.length === 0) {
     return "No mappings found for the provided concepts.";
   }
@@ -150,7 +150,7 @@ function formatMappings(mappings: ConceptMapping[]): string {
 /**
  * Format vocabularies list as Markdown
  */
-function formatVocabularies(vocabularies: Vocabulary[]): string {
+export function formatVocabularies(vocabularies: Vocabulary[]): string {
   const lines: string[] = [];
   lines.push(`# Available Vocabularies (${vocabularies.length})`);
   lines.push("");
@@ -170,7 +170,7 @@ function formatVocabularies(vocabularies: Vocabulary[]): string {
 /**
  * Format relationship types as Markdown
  */
-function formatRelationshipTypes(types: RelationshipType[]): string {
+export function formatRelationshipTypes(types: RelationshipType[]): string {
   const lines: string[] = [];
   lines.push(`# Relationship Types (${types.length})`);
   lines.push("");
@@ -189,7 +189,7 @@ function formatRelationshipTypes(types: RelationshipType[]): string {
 /**
  * Format domains as Markdown
  */
-function formatDomains(domains: Domain[]): string {
+export function formatDomains(domains: Domain[]): string {
   const lines: string[] = [];
   lines.push(`# Domains (${domains.length})`);
   lines.push("");
