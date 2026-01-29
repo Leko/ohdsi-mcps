@@ -3,7 +3,7 @@ import { z } from "zod";
 /**
  * CDM Table Level specification schema
  */
-export const CdmTableSchema = z.object({
+export const cdmTableSchema = z.object({
   cdmTableName: z.string(),
   schema: z.enum(["CDM", "VOCAB", "RESULTS"]),
   isRequired: z.boolean(),
@@ -16,12 +16,12 @@ export const CdmTableSchema = z.object({
   etlConventions: z.string().nullable(),
 });
 
-export type CdmTable = z.infer<typeof CdmTableSchema>;
+export type CdmTable = z.infer<typeof cdmTableSchema>;
 
 /**
  * CDM Field Level specification schema
  */
-export const CdmFieldSchema = z.object({
+export const cdmFieldSchema = z.object({
   cdmTableName: z.string(),
   cdmFieldName: z.string(),
   isRequired: z.boolean(),
@@ -37,13 +37,13 @@ export const CdmFieldSchema = z.object({
   uniqueDQIdentifiers: z.string().nullable(),
 });
 
-export type CdmField = z.infer<typeof CdmFieldSchema>;
+export type CdmField = z.infer<typeof cdmFieldSchema>;
 
 /**
  * CDM Table with its fields schema
  */
-export const CdmTableWithFieldsSchema = CdmTableSchema.extend({
-  fields: z.array(CdmFieldSchema),
+export const cdmTableWithFieldsSchema = cdmTableSchema.extend({
+  fields: z.array(cdmFieldSchema),
 });
 
-export type CdmTableWithFields = z.infer<typeof CdmTableWithFieldsSchema>;
+export type CdmTableWithFields = z.infer<typeof cdmTableWithFieldsSchema>;

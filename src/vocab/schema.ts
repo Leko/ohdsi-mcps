@@ -6,7 +6,7 @@ import { z } from "zod";
  */
 
 // Pagination meta schema
-export const PaginationMetaSchema = z.object({
+export const paginationMetaSchema = z.object({
   current_page: z.number(),
   page_size: z.number(),
   total_items: z.number(),
@@ -15,24 +15,24 @@ export const PaginationMetaSchema = z.object({
   has_previous: z.boolean(),
 });
 
-export type PaginationMeta = z.infer<typeof PaginationMetaSchema>;
+export type PaginationMeta = z.infer<typeof paginationMetaSchema>;
 
 // API meta schema
-export const ApiMetaSchema = z.object({
+export const apiMetaSchema = z.object({
   request_id: z.string(),
   vocab_release: z.string().optional(),
   timestamp: z.string().optional(),
-  pagination: PaginationMetaSchema.optional(),
+  pagination: paginationMetaSchema.optional(),
 });
 
-export type ApiMeta = z.infer<typeof ApiMetaSchema>;
+export type ApiMeta = z.infer<typeof apiMetaSchema>;
 
 // Base API response schema factory
 export const createApiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
     success: z.boolean(),
     data: dataSchema,
-    meta: ApiMetaSchema,
+    meta: apiMetaSchema,
   });
 
 export type ApiResponse<T> = {
@@ -42,7 +42,7 @@ export type ApiResponse<T> = {
 };
 
 // Concept schema
-export const ConceptSchema = z.object({
+export const conceptSchema = z.object({
   concept_id: z.number(),
   concept_name: z.string(),
   domain_id: z.string(),
@@ -55,43 +55,43 @@ export const ConceptSchema = z.object({
   invalid_reason: z.string().nullable(),
 });
 
-export type Concept = z.infer<typeof ConceptSchema>;
+export type Concept = z.infer<typeof conceptSchema>;
 
 // Concept synonym schema
-export const ConceptSynonymSchema = z.object({
+export const conceptSynonymSchema = z.object({
   concept_synonym_name: z.string(),
   language_concept_id: z.number(),
 });
 
-export type ConceptSynonym = z.infer<typeof ConceptSynonymSchema>;
+export type ConceptSynonym = z.infer<typeof conceptSynonymSchema>;
 
 // Concept relationship schema
-export const ConceptRelationshipSchema = z.object({
+export const conceptRelationshipSchema = z.object({
   relationship_id: z.string(),
   concept_id_2: z.number(),
   concept_name_2: z.string(),
   vocabulary_id_2: z.string(),
 });
 
-export type ConceptRelationship = z.infer<typeof ConceptRelationshipSchema>;
+export type ConceptRelationship = z.infer<typeof conceptRelationshipSchema>;
 
 // Concept detail schema (extends Concept with optional fields)
-export const ConceptDetailSchema = ConceptSchema.extend({
-  synonyms: z.array(ConceptSynonymSchema).optional(),
-  relationships: z.array(ConceptRelationshipSchema).optional(),
-  ancestors: z.array(ConceptSchema).optional(),
-  descendants: z.array(ConceptSchema).optional(),
+export const conceptDetailSchema = conceptSchema.extend({
+  synonyms: z.array(conceptSynonymSchema).optional(),
+  relationships: z.array(conceptRelationshipSchema).optional(),
+  ancestors: z.array(conceptSchema).optional(),
+  descendants: z.array(conceptSchema).optional(),
 });
 
-export type ConceptDetail = z.infer<typeof ConceptDetailSchema>;
+export type ConceptDetail = z.infer<typeof conceptDetailSchema>;
 
 // Search result schema (same structure as Concept)
-export const SearchResultSchema = ConceptSchema;
+export const searchResultSchema = conceptSchema;
 
-export type SearchResult = z.infer<typeof SearchResultSchema>;
+export type SearchResult = z.infer<typeof searchResultSchema>;
 
 // Ancestor/Descendant concept schema
-export const HierarchyConceptSchema = ConceptSchema.extend({
+export const hierarchyConceptSchema = conceptSchema.extend({
   level: z.number().optional(),
   min_levels_of_separation: z.number().optional(),
   max_levels_of_separation: z.number().optional(),
@@ -99,11 +99,11 @@ export const HierarchyConceptSchema = ConceptSchema.extend({
   relationship_name: z.string().optional(),
 });
 
-export type AncestorConcept = z.infer<typeof HierarchyConceptSchema>;
-export type DescendantConcept = z.infer<typeof HierarchyConceptSchema>;
+export type AncestorConcept = z.infer<typeof hierarchyConceptSchema>;
+export type DescendantConcept = z.infer<typeof hierarchyConceptSchema>;
 
 // Hierarchy summary schema
-export const HierarchySummarySchema = z.object({
+export const hierarchySummarySchema = z.object({
   total_ancestors: z.number().optional(),
   total_descendants: z.number().optional(),
   max_hierarchy_depth: z.number().optional(),
@@ -111,32 +111,32 @@ export const HierarchySummarySchema = z.object({
   relationship_types_used: z.array(z.string()).optional(),
 });
 
-export type HierarchySummary = z.infer<typeof HierarchySummarySchema>;
+export type HierarchySummary = z.infer<typeof hierarchySummarySchema>;
 
 // Ancestors response schema
-export const AncestorsResponseSchema = z.object({
+export const ancestorsResponseSchema = z.object({
   concept_id: z.number(),
   concept_name: z.string(),
   vocabulary_id: z.string(),
-  ancestors: z.array(HierarchyConceptSchema),
-  hierarchy_summary: HierarchySummarySchema.optional(),
+  ancestors: z.array(hierarchyConceptSchema),
+  hierarchy_summary: hierarchySummarySchema.optional(),
 });
 
-export type AncestorsResponse = z.infer<typeof AncestorsResponseSchema>;
+export type AncestorsResponse = z.infer<typeof ancestorsResponseSchema>;
 
 // Descendants response schema
-export const DescendantsResponseSchema = z.object({
+export const descendantsResponseSchema = z.object({
   concept_id: z.number(),
   concept_name: z.string(),
   vocabulary_id: z.string(),
-  descendants: z.array(HierarchyConceptSchema),
-  hierarchy_summary: HierarchySummarySchema.optional(),
+  descendants: z.array(hierarchyConceptSchema),
+  hierarchy_summary: hierarchySummarySchema.optional(),
 });
 
-export type DescendantsResponse = z.infer<typeof DescendantsResponseSchema>;
+export type DescendantsResponse = z.infer<typeof descendantsResponseSchema>;
 
 // Concept mapping schema
-export const ConceptMappingSchema = z.object({
+export const conceptMappingSchema = z.object({
   source_concept_id: z.number(),
   source_concept_name: z.string(),
   source_vocabulary_id: z.string(),
@@ -149,17 +149,17 @@ export const ConceptMappingSchema = z.object({
   valid_end_date: z.string(),
 });
 
-export type ConceptMapping = z.infer<typeof ConceptMappingSchema>;
+export type ConceptMapping = z.infer<typeof conceptMappingSchema>;
 
 // Mapping response schema
-export const MappingResponseSchema = z.object({
-  mappings: z.array(ConceptMappingSchema),
+export const mappingResponseSchema = z.object({
+  mappings: z.array(conceptMappingSchema),
 });
 
-export type MappingResponse = z.infer<typeof MappingResponseSchema>;
+export type MappingResponse = z.infer<typeof mappingResponseSchema>;
 
 // Vocabulary schema
-export const VocabularySchema = z.object({
+export const vocabularySchema = z.object({
   vocabulary_id: z.string(),
   vocabulary_name: z.string(),
   vocabulary_reference: z.string(),
@@ -169,17 +169,17 @@ export const VocabularySchema = z.object({
   standard_concept_count: z.number().optional(),
 });
 
-export type Vocabulary = z.infer<typeof VocabularySchema>;
+export type Vocabulary = z.infer<typeof vocabularySchema>;
 
 // Vocabularies response schema
-export const VocabulariesResponseSchema = z.object({
-  vocabularies: z.array(VocabularySchema),
+export const vocabulariesResponseSchema = z.object({
+  vocabularies: z.array(vocabularySchema),
 });
 
-export type VocabulariesResponse = z.infer<typeof VocabulariesResponseSchema>;
+export type VocabulariesResponse = z.infer<typeof vocabulariesResponseSchema>;
 
 // Relationship type schema
-export const RelationshipTypeSchema = z.object({
+export const relationshipTypeSchema = z.object({
   relationship_id: z.string(),
   relationship_name: z.string(),
   is_hierarchical: z.string(),
@@ -188,17 +188,17 @@ export const RelationshipTypeSchema = z.object({
   relationship_concept_id: z.number(),
 });
 
-export type RelationshipType = z.infer<typeof RelationshipTypeSchema>;
+export type RelationshipType = z.infer<typeof relationshipTypeSchema>;
 
 // Relationship types response schema
-export const RelationshipTypesResponseSchema = z.object({
-  relationship_types: z.array(RelationshipTypeSchema),
+export const relationshipTypesResponseSchema = z.object({
+  relationship_types: z.array(relationshipTypeSchema),
 });
 
-export type RelationshipTypesResponse = z.infer<typeof RelationshipTypesResponseSchema>;
+export type RelationshipTypesResponse = z.infer<typeof relationshipTypesResponseSchema>;
 
 // Domain schema
-export const DomainSchema = z.object({
+export const domainSchema = z.object({
   domain_id: z.string(),
   domain_name: z.string(),
   domain_concept_id: z.number(),
@@ -207,26 +207,26 @@ export const DomainSchema = z.object({
   vocabulary_coverage: z.array(z.string()).optional(),
 });
 
-export type Domain = z.infer<typeof DomainSchema>;
+export type Domain = z.infer<typeof domainSchema>;
 
 // Domains response schema
-export const DomainsResponseSchema = z.object({
-  domains: z.array(DomainSchema),
+export const domainsResponseSchema = z.object({
+  domains: z.array(domainSchema),
 });
 
-export type DomainsResponse = z.infer<typeof DomainsResponseSchema>;
+export type DomainsResponse = z.infer<typeof domainsResponseSchema>;
 
 // API Client options schema
-export const OmopHubClientOptionsSchema = z.object({
+export const omopHubClientOptionsSchema = z.object({
   apiKey: z.string(),
   baseUrl: z.string().optional(),
   vocabRelease: z.string().optional(),
 });
 
-export type OmopHubClientOptions = z.infer<typeof OmopHubClientOptionsSchema>;
+export type OmopHubClientOptions = z.infer<typeof omopHubClientOptionsSchema>;
 
 // Tool input schemas
-export const SearchConceptsInputSchema = z.object({
+export const searchConceptsInputSchema = z.object({
   query: z.string(),
   vocabulary_ids: z.string().optional(),
   domain_ids: z.string().optional(),
@@ -234,18 +234,18 @@ export const SearchConceptsInputSchema = z.object({
   page_size: z.number().optional(),
 });
 
-export type SearchConceptsInput = z.infer<typeof SearchConceptsInputSchema>;
+export type SearchConceptsInput = z.infer<typeof searchConceptsInputSchema>;
 
-export const GetConceptInputSchema = z.object({
+export const getConceptInputSchema = z.object({
   concept_id: z.number(),
   include_relationships: z.boolean().optional(),
   include_synonyms: z.boolean().optional(),
   include_hierarchy: z.boolean().optional(),
 });
 
-export type GetConceptInput = z.infer<typeof GetConceptInputSchema>;
+export type GetConceptInput = z.infer<typeof getConceptInputSchema>;
 
-export const GetAncestorsInputSchema = z.object({
+export const getAncestorsInputSchema = z.object({
   concept_id: z.number(),
   vocabulary_ids: z.string().optional(),
   domain_ids: z.string().optional(),
@@ -256,9 +256,9 @@ export const GetAncestorsInputSchema = z.object({
   page_size: z.number().optional(),
 });
 
-export type GetAncestorsInput = z.infer<typeof GetAncestorsInputSchema>;
+export type GetAncestorsInput = z.infer<typeof getAncestorsInputSchema>;
 
-export const GetDescendantsInputSchema = z.object({
+export const getDescendantsInputSchema = z.object({
   concept_id: z.number(),
   vocabulary_ids: z.string().optional(),
   domain_ids: z.string().optional(),
@@ -269,18 +269,18 @@ export const GetDescendantsInputSchema = z.object({
   page_size: z.number().optional(),
 });
 
-export type GetDescendantsInput = z.infer<typeof GetDescendantsInputSchema>;
+export type GetDescendantsInput = z.infer<typeof getDescendantsInputSchema>;
 
-export const MapConceptsInputSchema = z.object({
+export const mapConceptsInputSchema = z.object({
   source_concepts: z.array(z.number()),
   target_vocabulary: z.string(),
   mapping_type: z.enum(["direct", "equivalent", "broader", "narrower"]).optional(),
   include_invalid: z.boolean().optional(),
 });
 
-export type MapConceptsInput = z.infer<typeof MapConceptsInputSchema>;
+export type MapConceptsInput = z.infer<typeof mapConceptsInputSchema>;
 
-export const ListVocabulariesInputSchema = z.object({
+export const listVocabulariesInputSchema = z.object({
   page: z.number().optional(),
   page_size: z.number().optional(),
   include_stats: z.boolean().optional(),
@@ -289,10 +289,10 @@ export const ListVocabulariesInputSchema = z.object({
   sort_order: z.enum(["asc", "desc"]).optional(),
 });
 
-export type ListVocabulariesInput = z.infer<typeof ListVocabulariesInputSchema>;
+export type ListVocabulariesInput = z.infer<typeof listVocabulariesInputSchema>;
 
-export const ListDomainsInputSchema = z.object({
+export const listDomainsInputSchema = z.object({
   include_stats: z.boolean().optional(),
 });
 
-export type ListDomainsInput = z.infer<typeof ListDomainsInputSchema>;
+export type ListDomainsInput = z.infer<typeof listDomainsInputSchema>;
