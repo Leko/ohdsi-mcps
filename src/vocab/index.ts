@@ -13,7 +13,7 @@ import type {
   Vocabulary,
   RelationshipType,
   Domain,
-} from "./types.js";
+} from "./schema.js";
 
 /**
  * Format search results as Markdown

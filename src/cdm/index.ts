@@ -6,7 +6,7 @@ import {
 } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { loadTablesWithFields } from "./parser.js";
-import type { CdmTableWithFields, CdmField } from "./types.js";
+import type { CdmTableWithFields, CdmField } from "./schema.js";
 
 const CDM_VERSION = "5.4";
 

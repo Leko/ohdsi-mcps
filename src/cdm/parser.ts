@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import type { CdmTable, CdmField, CdmTableWithFields } from "./types.js";
+import type { CdmTable, CdmField, CdmTableWithFields } from "./schema.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

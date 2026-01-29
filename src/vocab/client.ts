@@ -21,7 +21,7 @@ import type {
   MapConceptsInput,
   ListVocabulariesInput,
   ListDomainsInput,
-} from "./types.js";
+} from "./schema.js";
 
 const DEFAULT_BASE_URL = "https://api.omophub.com/v1";
 

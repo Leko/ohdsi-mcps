@@ -4,7 +4,7 @@ import {
   formatFieldMarkdown,
   formatTablesListMarkdown,
 } from "./index.js";
-import type { CdmTableWithFields, CdmField } from "./types.js";
+import type { CdmTableWithFields, CdmField } from "./schema.js";
 
 describe("formatTableMarkdown", () => {
   it("should format a basic table", () => {

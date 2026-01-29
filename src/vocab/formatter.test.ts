@@ -17,7 +17,7 @@ import type {
   Vocabulary,
   RelationshipType,
   Domain,
-} from "./types.js";
+} from "./schema.js";
 
 describe("formatSearchResults", () => {
   it("should return message for empty results", () => {
