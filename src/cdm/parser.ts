@@ -1,7 +1,14 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import type { CdmTable, CdmField, CdmTableWithFields } from "./types.js";
+import {
+  cdmTableSchema,
+  cdmFieldSchema,
+  cdmTableWithFieldsSchema,
+  type CdmTable,
+  type CdmField,
+  type CdmTableWithFields,
+} from "./schema.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -123,10 +130,10 @@ export function loadTables(): CdmTable[] {
     throw new Error("Table Level CSV is empty");
   }
 
-  return rows.slice(1).map((row): CdmTable => {
-    return {
+  return rows.slice(1).map((row) => {
+    return cdmTableSchema.parse({
       cdmTableName: row[0] ?? "",
-      schema: (row[1] ?? "CDM") as CdmTable["schema"],
+      schema: row[1] ?? "CDM",
       isRequired: parseBoolean(row[2] ?? "No"),
       conceptPrefix: parseNullableString(row[3] ?? ""),
       measurePersonCompleteness: parseBoolean(row[4] ?? "No"),
@@ -135,7 +142,7 @@ export function loadTables(): CdmTable[] {
       tableDescription: row[7] ?? "",
       userGuidance: parseNullableString(row[8] ?? ""),
       etlConventions: parseNullableString(row[9] ?? ""),
-    };
+    });
   });
 }
 
@@ -161,8 +168,8 @@ export function loadFields(): CdmField[] {
     throw new Error("Field Level CSV is empty");
   }
 
-  return rows.slice(1).map((row): CdmField => {
-    return {
+  return rows.slice(1).map((row) => {
+    return cdmFieldSchema.parse({
       cdmTableName: row[0] ?? "",
       cdmFieldName: row[1] ?? "",
       isRequired: parseBoolean(row[2] ?? "No"),
@@ -176,7 +183,7 @@ export function loadFields(): CdmField[] {
       fkDomain: parseNullableString(row[10] ?? ""),
       fkClass: parseNullableString(row[11] ?? ""),
       uniqueDQIdentifiers: parseNullableString(row[12] ?? ""),
-    };
+    });
   });
 }
 
@@ -194,10 +201,10 @@ export function loadTablesWithFields(): CdmTableWithFields[] {
     fieldsByTable.set(field.cdmTableName, existing);
   }
 
-  return tables.map((table): CdmTableWithFields => {
-    return {
+  return tables.map((table) => {
+    return cdmTableWithFieldsSchema.parse({
       ...table,
       fields: fieldsByTable.get(table.cdmTableName) ?? [],
-    };
+    });
   });
 }

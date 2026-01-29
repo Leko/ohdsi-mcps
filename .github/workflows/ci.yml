@@ -19,6 +19,14 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
 
+      - name: Cache TypeScript build
+        uses: actions/cache@v4
+        with:
+          path: dist
+          key: tsc-${{ runner.os }}-${{ hashFiles('src/**/*.ts', 'tsconfig.json') }}
+          restore-keys: |
+            tsc-${{ runner.os }}-
+
       - name: Install dependencies
         run: npm ci
 
@@ -41,6 +49,8 @@ jobs:
         run: npm ci
 
       - name: Run tests with coverage
+        env:
+          OMOPHUB_API_KEY: ${{ secrets.OMOPHUB_API_KEY }}
         run: npm run test:coverage
 
       - name: Upload coverage artifact
@@ -58,8 +68,6 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: Download coverage artifact
         uses: actions/download-artifact@v4
         with:

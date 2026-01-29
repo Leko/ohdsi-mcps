@@ -1,11 +1,12 @@
 {
   "name": "ohdsi-mcps",
   "version": "1.0.0",
-  "description": "A collection of MCP servers for OHDSI/OMOP users (CDM specification, OHDSI Forum)",
+  "description": "A collection of MCP servers for OHDSI/OMOP users (CDM specification, Vocabulary search)",
   "type": "module",
   "main": "./dist/cdm/index.js",
   "bin": {
-    "ohdsi-cdm-mcp": "./dist/cdm/index.js"
+    "ohdsi-cdm-mcp": "./dist/cdm/index.js",
+    "ohdsi-vocab-mcp": "./dist/vocab/index.js"
   },
   "files": [
     "dist",
@@ -15,7 +16,8 @@
     "build": "tsc",
     "prepublishOnly": "npm run build",
     "cdm": "tsx src/cdm/index.ts",
-    "test": "vitest run",
+    "vocab": "tsx --env-file=.env src/vocab/index.ts",
+    "test": "node --env-file=.env node_modules/vitest/vitest.mjs run",
     "test:coverage": "vitest run --coverage"
   },
   "repository": "github:Leko/ohdsi-mcps",

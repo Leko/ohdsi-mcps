@@ -6,14 +6,14 @@ import {
 } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { loadTablesWithFields } from "./parser.js";
-import type { CdmTableWithFields, CdmField } from "./types.js";
+import type { CdmTableWithFields, CdmField } from "./schema.js";
 
 const CDM_VERSION = "5.4";
 
 /**
  * Format table info as Markdown
  */
-function formatTableMarkdown(table: CdmTableWithFields): string {
+export function formatTableMarkdown(table: CdmTableWithFields): string {
   const lines: string[] = [];
 
   lines.push(`# ${table.cdmTableName}`);
@@ -64,7 +64,7 @@ function formatTableMarkdown(table: CdmTableWithFields): string {
 /**
  * Format field info as Markdown
  */
-function formatFieldMarkdown(
+export function formatFieldMarkdown(
   field: CdmField,
   tableName: string
 ): string {
@@ -110,7 +110,7 @@ function formatFieldMarkdown(
 /**
  * Format tables list as Markdown
  */
-function formatTablesListMarkdown(tables: CdmTableWithFields[]): string {
+export function formatTablesListMarkdown(tables: CdmTableWithFields[]): string {
   const lines: string[] = [];
 
   lines.push(`# OMOP CDM v${CDM_VERSION} Tables`);
