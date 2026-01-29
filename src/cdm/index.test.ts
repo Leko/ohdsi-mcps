@@ -12,14 +12,28 @@ describe("formatTableMarkdown", () => {
       cdmTableName: "person",
       schema: "CDM",
       isRequired: true,
+      conceptPrefix: null,
+      measurePersonCompleteness: false,
+      measurePersonCompletenessThreshold: null,
+      validation: null,
       tableDescription: "The Person table contains records.",
+      userGuidance: null,
+      etlConventions: null,
       fields: [
         {
+          cdmTableName: "person",
           cdmFieldName: "person_id",
           cdmDatatype: "integer",
           isRequired: true,
           isPrimaryKey: true,
           isForeignKey: false,
+          userGuidance: null,
+          etlConventions: null,
+          fkTableName: null,
+          fkFieldName: null,
+          fkDomain: null,
+          fkClass: null,
+          uniqueDQIdentifiers: null,
         },
       ],
     };
@@ -41,6 +55,9 @@ describe("formatTableMarkdown", () => {
       schema: "CDM",
       isRequired: false,
       conceptPrefix: "visit",
+      measurePersonCompleteness: false,
+      measurePersonCompletenessThreshold: null,
+      validation: null,
       tableDescription: "Visit records.",
       userGuidance: "Use this for visits.",
       etlConventions: "Map from source visits.",
@@ -61,16 +78,28 @@ describe("formatTableMarkdown", () => {
       cdmTableName: "condition_occurrence",
       schema: "CDM",
       isRequired: false,
+      conceptPrefix: null,
+      measurePersonCompleteness: false,
+      measurePersonCompletenessThreshold: null,
+      validation: null,
       tableDescription: "Conditions.",
+      userGuidance: null,
+      etlConventions: null,
       fields: [
         {
+          cdmTableName: "condition_occurrence",
           cdmFieldName: "person_id",
           cdmDatatype: "integer",
           isRequired: true,
           isPrimaryKey: false,
           isForeignKey: true,
+          userGuidance: null,
+          etlConventions: null,
           fkTableName: "person",
           fkFieldName: "person_id",
+          fkDomain: null,
+          fkClass: null,
+          uniqueDQIdentifiers: null,
         },
       ],
     };
@@ -84,11 +113,19 @@ describe("formatTableMarkdown", () => {
 describe("formatFieldMarkdown", () => {
   it("should format a basic field", () => {
     const field: CdmField = {
+      cdmTableName: "person",
       cdmFieldName: "person_id",
       cdmDatatype: "integer",
       isRequired: true,
       isPrimaryKey: true,
       isForeignKey: false,
+      userGuidance: null,
+      etlConventions: null,
+      fkTableName: null,
+      fkFieldName: null,
+      fkDomain: null,
+      fkClass: null,
+      uniqueDQIdentifiers: null,
     };
 
     const result = formatFieldMarkdown(field, "person");
@@ -102,15 +139,19 @@ describe("formatFieldMarkdown", () => {
 
   it("should include foreign key reference details", () => {
     const field: CdmField = {
+      cdmTableName: "condition_occurrence",
       cdmFieldName: "condition_concept_id",
       cdmDatatype: "integer",
       isRequired: true,
       isPrimaryKey: false,
       isForeignKey: true,
+      userGuidance: null,
+      etlConventions: null,
       fkTableName: "concept",
       fkFieldName: "concept_id",
       fkDomain: "Condition",
       fkClass: "Clinical Finding",
+      uniqueDQIdentifiers: null,
     };
 
     const result = formatFieldMarkdown(field, "condition_occurrence");
@@ -124,6 +165,7 @@ describe("formatFieldMarkdown", () => {
 
   it("should include guidance sections when present", () => {
     const field: CdmField = {
+      cdmTableName: "person",
       cdmFieldName: "birth_datetime",
       cdmDatatype: "datetime",
       isRequired: false,
@@ -131,6 +173,11 @@ describe("formatFieldMarkdown", () => {
       isForeignKey: false,
       userGuidance: "Use full datetime when available.",
       etlConventions: "Derive from source birth date.",
+      fkTableName: null,
+      fkFieldName: null,
+      fkDomain: null,
+      fkClass: null,
+      uniqueDQIdentifiers: null,
     };
 
     const result = formatFieldMarkdown(field, "person");
@@ -156,21 +203,39 @@ describe("formatTablesListMarkdown", () => {
         cdmTableName: "person",
         schema: "CDM",
         isRequired: true,
+        conceptPrefix: null,
+        measurePersonCompleteness: false,
+        measurePersonCompletenessThreshold: null,
+        validation: null,
         tableDescription: "Person records.",
+        userGuidance: null,
+        etlConventions: null,
         fields: [],
       },
       {
         cdmTableName: "concept",
         schema: "VOCAB",
         isRequired: true,
+        conceptPrefix: null,
+        measurePersonCompleteness: false,
+        measurePersonCompletenessThreshold: null,
+        validation: null,
         tableDescription: "Vocabulary concepts.",
+        userGuidance: null,
+        etlConventions: null,
         fields: [],
       },
       {
         cdmTableName: "cohort",
         schema: "RESULTS",
         isRequired: false,
+        conceptPrefix: null,
+        measurePersonCompleteness: false,
+        measurePersonCompletenessThreshold: null,
+        validation: null,
         tableDescription: "Cohort definitions.",
+        userGuidance: null,
+        etlConventions: null,
         fields: [],
       },
     ];
@@ -193,7 +258,13 @@ describe("formatTablesListMarkdown", () => {
         cdmTableName: "test",
         schema: "CDM",
         isRequired: true,
+        conceptPrefix: null,
+        measurePersonCompleteness: false,
+        measurePersonCompletenessThreshold: null,
+        validation: null,
         tableDescription: longDesc,
+        userGuidance: null,
+        etlConventions: null,
         fields: [],
       },
     ];
