@@ -3,24 +3,34 @@
  * Wrapper for the OMOPHub Vocabulary API
  */
 
-import type {
-  ApiResponse,
-  OmopHubClientOptions,
-  ConceptDetail,
-  SearchResult,
-  AncestorsResponse,
-  DescendantsResponse,
-  MappingResponse,
-  VocabulariesResponse,
-  RelationshipTypesResponse,
-  DomainsResponse,
-  SearchConceptsInput,
-  GetConceptInput,
-  GetAncestorsInput,
-  GetDescendantsInput,
-  MapConceptsInput,
-  ListVocabulariesInput,
-  ListDomainsInput,
+import { z } from "zod";
+import {
+  createApiResponseSchema,
+  searchResultSchema,
+  conceptDetailSchema,
+  ancestorsResponseSchema,
+  descendantsResponseSchema,
+  mappingResponseSchema,
+  vocabulariesResponseSchema,
+  relationshipTypesResponseSchema,
+  domainsResponseSchema,
+  type ApiResponse,
+  type OmopHubClientOptions,
+  type ConceptDetail,
+  type SearchResult,
+  type AncestorsResponse,
+  type DescendantsResponse,
+  type MappingResponse,
+  type VocabulariesResponse,
+  type RelationshipTypesResponse,
+  type DomainsResponse,
+  type SearchConceptsInput,
+  type GetConceptInput,
+  type GetAncestorsInput,
+  type GetDescendantsInput,
+  type MapConceptsInput,
+  type ListVocabulariesInput,
+  type ListDomainsInput,
 } from "./schema.js";
 
 const DEFAULT_BASE_URL = "https://api.omophub.com/v1";
@@ -39,6 +49,7 @@ export class OmopHubClient {
   private async request<T>(
     method: "GET" | "POST",
     path: string,
+    schema: z.ZodType<ApiResponse<T>>,
     params?: Record<string, string | number | boolean | undefined>,
     body?: unknown
   ): Promise<ApiResponse<T>> {
@@ -82,7 +93,8 @@ export class OmopHubClient {
       );
     }
 
-    return response.json() as Promise<ApiResponse<T>>;
+    const json: unknown = await response.json();
+    return schema.parse(json);
   }
 
   /**
@@ -92,22 +104,28 @@ export class OmopHubClient {
   async searchConcepts(
     input: SearchConceptsInput
   ): Promise<ApiResponse<SearchResult[]>> {
-    return this.request<SearchResult[]>("GET", "/search/concepts", {
-      query: input.query,
-      vocabulary_ids: input.vocabulary_ids,
-      domain_ids: input.domain_ids,
-      page: input.page,
-      page_size: input.page_size,
-    });
+    return this.request(
+      "GET",
+      "/search/concepts",
+      createApiResponseSchema(z.array(searchResultSchema)),
+      {
+        query: input.query,
+        vocabulary_ids: input.vocabulary_ids,
+        domain_ids: input.domain_ids,
+        page: input.page,
+        page_size: input.page_size,
+      }
+    );
   }
 
   /**
    * Get detailed information about a specific concept
    */
   async getConcept(input: GetConceptInput): Promise<ApiResponse<ConceptDetail>> {
-    return this.request<ConceptDetail>(
+    return this.request(
       "GET",
       `/concepts/${input.concept_id}`,
+      createApiResponseSchema(conceptDetailSchema),
       {
         include_relationships: input.include_relationships,
         include_synonyms: input.include_synonyms,
@@ -122,9 +140,10 @@ export class OmopHubClient {
   async getAncestors(
     input: GetAncestorsInput
   ): Promise<ApiResponse<AncestorsResponse>> {
-    return this.request<AncestorsResponse>(
+    return this.request(
       "GET",
       `/concepts/${input.concept_id}/ancestors`,
+      createApiResponseSchema(ancestorsResponseSchema),
       {
         vocabulary_ids: input.vocabulary_ids,
         domain_ids: input.domain_ids,
@@ -143,9 +162,10 @@ export class OmopHubClient {
   async getDescendants(
     input: GetDescendantsInput
   ): Promise<ApiResponse<DescendantsResponse>> {
-    return this.request<DescendantsResponse>(
+    return this.request(
       "GET",
       `/concepts/${input.concept_id}/descendants`,
+      createApiResponseSchema(descendantsResponseSchema),
       {
         vocabulary_ids: input.vocabulary_ids,
         domain_ids: input.domain_ids,
@@ -164,9 +184,10 @@ export class OmopHubClient {
   async mapConcepts(
     input: MapConceptsInput
   ): Promise<ApiResponse<MappingResponse>> {
-    return this.request<MappingResponse>(
+    return this.request(
       "POST",
       "/concepts/map",
+      createApiResponseSchema(mappingResponseSchema),
       {
         mapping_type: input.mapping_type,
         include_invalid: input.include_invalid,
@@ -184,14 +205,19 @@ export class OmopHubClient {
   async listVocabularies(
     input?: ListVocabulariesInput
   ): Promise<ApiResponse<VocabulariesResponse>> {
-    return this.request<VocabulariesResponse>("GET", "/vocabularies", {
-      page: input?.page,
-      page_size: input?.page_size,
-      include_stats: input?.include_stats,
-      include_inactive: input?.include_inactive,
-      sort_by: input?.sort_by,
-      sort_order: input?.sort_order,
-    });
+    return this.request(
+      "GET",
+      "/vocabularies",
+      createApiResponseSchema(vocabulariesResponseSchema),
+      {
+        page: input?.page,
+        page_size: input?.page_size,
+        include_stats: input?.include_stats,
+        include_inactive: input?.include_inactive,
+        sort_by: input?.sort_by,
+        sort_order: input?.sort_order,
+      }
+    );
   }
 
   /**
@@ -201,9 +227,10 @@ export class OmopHubClient {
     page?: number,
     pageSize?: number
   ): Promise<ApiResponse<RelationshipTypesResponse>> {
-    return this.request<RelationshipTypesResponse>(
+    return this.request(
       "GET",
       "/relationships/types",
+      createApiResponseSchema(relationshipTypesResponseSchema),
       {
         page,
         page_size: pageSize,
@@ -217,9 +244,14 @@ export class OmopHubClient {
   async listDomains(
     input?: ListDomainsInput
   ): Promise<ApiResponse<DomainsResponse>> {
-    return this.request<DomainsResponse>("GET", "/domains", {
-      include_stats: input?.include_stats,
-    });
+    return this.request(
+      "GET",
+      "/domains",
+      createApiResponseSchema(domainsResponseSchema),
+      {
+        include_stats: input?.include_stats,
+      }
+    );
   }
 }
 

@@ -5,14 +5,14 @@ import { z } from "zod";
  * Based on https://docs.omophub.com/api-reference
  */
 
-// Pagination meta schema
+// Pagination meta schema (all fields optional as API doesn't always return them)
 export const paginationMetaSchema = z.object({
-  current_page: z.number(),
-  page_size: z.number(),
-  total_items: z.number(),
-  total_pages: z.number(),
-  has_next: z.boolean(),
-  has_previous: z.boolean(),
+  current_page: z.number().optional(),
+  page_size: z.number().optional(),
+  total_items: z.number().optional(),
+  total_pages: z.number().optional(),
+  has_next: z.boolean().optional(),
+  has_previous: z.boolean().optional(),
 });
 
 export type PaginationMeta = z.infer<typeof paginationMetaSchema>;
@@ -41,6 +41,9 @@ export type ApiResponse<T> = {
   meta: ApiMeta;
 };
 
+// Date schema - API can return string or object with date parts
+const dateSchema = z.union([z.string(), z.object({}).passthrough()]);
+
 // Concept schema
 export const conceptSchema = z.object({
   concept_id: z.number(),
@@ -50,35 +53,39 @@ export const conceptSchema = z.object({
   concept_class_id: z.string(),
   standard_concept: z.string().nullable(),
   concept_code: z.string(),
-  valid_start_date: z.string(),
-  valid_end_date: z.string(),
+  valid_start_date: dateSchema,
+  valid_end_date: dateSchema,
   invalid_reason: z.string().nullable(),
 });
 
 export type Concept = z.infer<typeof conceptSchema>;
 
-// Concept synonym schema
-export const conceptSynonymSchema = z.object({
-  concept_synonym_name: z.string(),
-  language_concept_id: z.number(),
-});
+// Concept synonym schema - API returns simple strings
+export const conceptSynonymSchema = z.string();
 
 export type ConceptSynonym = z.infer<typeof conceptSynonymSchema>;
 
-// Concept relationship schema
+// Concept relationship schema - flexible to match API response
 export const conceptRelationshipSchema = z.object({
-  relationship_id: z.string(),
-  concept_id_2: z.number(),
-  concept_name_2: z.string(),
-  vocabulary_id_2: z.string(),
-});
+  relationship_id: z.string().optional(),
+  concept_id_2: z.number().optional(),
+  concept_id: z.number().optional(),
+  concept_name_2: z.string().optional(),
+  concept_name: z.string().optional(),
+  vocabulary_id_2: z.string().optional(),
+  vocabulary_id: z.string().optional(),
+}).passthrough();
 
 export type ConceptRelationship = z.infer<typeof conceptRelationshipSchema>;
 
 // Concept detail schema (extends Concept with optional fields)
+// relationships can be an array or an object (keyed by relationship type)
 export const conceptDetailSchema = conceptSchema.extend({
   synonyms: z.array(conceptSynonymSchema).optional(),
-  relationships: z.array(conceptRelationshipSchema).optional(),
+  relationships: z.union([
+    z.array(conceptRelationshipSchema),
+    z.record(z.string(), z.array(conceptRelationshipSchema)),
+  ]).optional(),
   ancestors: z.array(conceptSchema).optional(),
   descendants: z.array(conceptSchema).optional(),
 });
@@ -145,8 +152,8 @@ export const conceptMappingSchema = z.object({
   target_vocabulary_id: z.string(),
   relationship_id: z.string(),
   confidence_score: z.number().optional(),
-  valid_start_date: z.string(),
-  valid_end_date: z.string(),
+  valid_start_date: dateSchema,
+  valid_end_date: dateSchema,
 });
 
 export type ConceptMapping = z.infer<typeof conceptMappingSchema>;
@@ -162,9 +169,9 @@ export type MappingResponse = z.infer<typeof mappingResponseSchema>;
 export const vocabularySchema = z.object({
   vocabulary_id: z.string(),
   vocabulary_name: z.string(),
-  vocabulary_reference: z.string(),
-  vocabulary_version: z.string(),
-  vocabulary_concept_id: z.number(),
+  vocabulary_reference: z.string().nullable().optional(),
+  vocabulary_version: z.string().nullable().optional(),
+  vocabulary_concept_id: z.number().optional(),
   concept_count: z.number().optional(),
   standard_concept_count: z.number().optional(),
 });

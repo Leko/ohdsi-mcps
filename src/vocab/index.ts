@@ -71,20 +71,27 @@ export function formatConceptDetail(concept: ConceptDetail): string {
     lines.push("## Synonyms");
     lines.push("");
     for (const syn of concept.synonyms) {
-      lines.push(`- ${syn.concept_synonym_name}`);
+      lines.push(`- ${syn}`);
     }
   }
 
-  if (concept.relationships && concept.relationships.length > 0) {
-    lines.push("");
-    lines.push("## Relationships");
-    lines.push("");
-    lines.push("| Relationship | Target Concept | Vocabulary |");
-    lines.push("|-------------|----------------|------------|");
-    for (const rel of concept.relationships) {
-      lines.push(
-        `| ${rel.relationship_id} | ${rel.concept_name_2} (${rel.concept_id_2}) | ${rel.vocabulary_id_2} |`
-      );
+  if (concept.relationships) {
+    // Handle both array and object formats
+    const relArray = Array.isArray(concept.relationships)
+      ? concept.relationships
+      : Object.values(concept.relationships).flat();
+
+    if (relArray.length > 0) {
+      lines.push("");
+      lines.push("## Relationships");
+      lines.push("");
+      lines.push("| Relationship | Target Concept | Vocabulary |");
+      lines.push("|-------------|----------------|------------|");
+      for (const rel of relArray) {
+        lines.push(
+          `| ${rel.relationship_id} | ${rel.concept_name_2} (${rel.concept_id_2}) | ${rel.vocabulary_id_2} |`
+        );
+      }
     }
   }
 

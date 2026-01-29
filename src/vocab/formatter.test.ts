@@ -127,10 +127,7 @@ describe("formatConceptDetail", () => {
       valid_start_date: "2002-01-31",
       valid_end_date: "2099-12-31",
       invalid_reason: null,
-      synonyms: [
-        { concept_synonym_name: "T2DM", language_concept_id: 0 },
-        { concept_synonym_name: "Adult-onset diabetes", language_concept_id: 0 },
-      ],
+      synonyms: ["T2DM", "Adult-onset diabetes"],
     };
 
     const result = formatConceptDetail(concept);
