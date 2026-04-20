@@ -13,11 +13,13 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present",
+    "knip": "knip"
   },
   "devDependencies": {
     "@types/node": "^24.12.2",
     "@vitest/coverage-v8": "^4.1.4",
+    "knip": "^6.4.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.1.4"
