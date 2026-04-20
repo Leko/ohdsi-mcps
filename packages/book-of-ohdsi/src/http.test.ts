@@ -61,7 +61,11 @@ describe("createHttpHandler (Fetch API transport)", () => {
       result: { tools: Array<{ name: string }> };
     };
     const names = payload.result.tools.map((t) => t.name).sort();
-    expect(names).toEqual(["list_chapters", "read_chapter", "search_book"]);
+    expect(names).toEqual([
+      "book-of-ohdsi.chapter.list",
+      "book-of-ohdsi.chapter.read",
+      "book-of-ohdsi.chapter.search",
+    ]);
   });
 
   it("rejects non-POST / non-GET verbs with 4xx", async () => {

@@ -6,7 +6,7 @@ Hosted Model Context Protocol (MCP) servers for the [OHDSI](https://www.ohdsi.or
 
 | Slug            | Description                                                                                            |                                                                                           | MCP endpoint                                               |
 | --------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `book-of-ohdsi` | The full text of [The Book of OHDSI](https://github.com/OHDSI/TheBookOfOhdsi) exposed as MCP resources | `list_chapters`, `read_chapter`, `search_book` full-text search over section-level chunks | `https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp` |
+| `book-of-ohdsi` | The full text of [The Book of OHDSI](https://github.com/OHDSI/TheBookOfOhdsi) exposed as MCP resources | `book-of-ohdsi.chapter.list`, `book-of-ohdsi.chapter.read`, `book-of-ohdsi.chapter.search` (full-text search over section-level chunks) | `https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp` |
 
 ## Quick install
 
@@ -23,7 +23,7 @@ Once the connector is installed, try:
 - "Explain the OMOP Common Data Model visit_occurrence table based on The Book of OHDSI."
 - "Which chapter discusses propensity-score calibration? Quote the relevant passage."
 
-Under the hood the assistant calls `list_chapters` / `read_chapter` / `search_book` against the hosted server.
+Under the hood the assistant calls `book-of-ohdsi.chapter.list` / `book-of-ohdsi.chapter.read` / `book-of-ohdsi.chapter.search` against the hosted server.
 
 ## Verify from the terminal
 
