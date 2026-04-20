@@ -115,6 +115,7 @@ export function createServer(
       description:
         "List every chapter of The Book of OHDSI, in reading order, with its slug, title, and MCP resource URI. Use this to discover what chapters exist before deciding which to read in detail.",
       inputSchema: {},
+      annotations: { readOnlyHint: true, openWorldHint: false },
     },
     () => ({
       content: [{ type: "text", text: renderListChapters(manifest) }],
@@ -135,6 +136,7 @@ export function createServer(
             'Chapter slug returned by book-of-ohdsi_chapter_list (e.g. "CommonDataModel", "StandardizedVocabularies").',
           ),
       },
+      annotations: { readOnlyHint: true, openWorldHint: false },
     },
     ({ slug }) => {
       try {
@@ -175,6 +177,7 @@ export function createServer(
             `Maximum number of matches to return (default ${SEARCH_LIMIT_DEFAULT}, max ${SEARCH_LIMIT_MAX}).`,
           ),
       },
+      annotations: { readOnlyHint: true, openWorldHint: false },
     },
     ({ query, limit }) => ({
       content: [

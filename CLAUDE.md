@@ -107,6 +107,16 @@ Rationale:
 
 When you add a new tool, self-references inside its description and zod `describe()` strings must spell the full tool name the same way. Also add a row for the tool to the top-level `README.md`'s `### Tools` table.
 
+## Tool annotations
+
+Every `registerTool` call MUST pass an `annotations` object describing behaviour hints. These drive the way MCP clients surface the tool — e.g. Claude's connector UI groups tools with `readOnlyHint: true` under "Read-only tools" and everything else under "Other tools". Clients also use them to decide which confirmations to show.
+
+At minimum set:
+
+- `readOnlyHint: true` when the tool cannot modify any external state. All current servers in this monorepo are read-only.
+- `openWorldHint: false` when the tool only reads a closed, bundled corpus (e.g. `book-of-ohdsi`, which serves vendored static content). Set it to `true` (the default) when the tool reaches out to an external service whose state you do not control (e.g. `ohdsi-weekly-digest`, which hits the `ohdsi.org` WordPress REST API at request time).
+- If the tool is ever not read-only, also consider `destructiveHint` and `idempotentHint` per the MCP 2025-11-25 `ToolAnnotations` spec.
+
 ## Dependency management
 
 - **Dependencies MUST be added or updated through `npm i` (or `npm install <pkg>`)**. Editing `package.json` by hand and then running `npm install` is not allowed.

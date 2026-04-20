@@ -60,6 +60,7 @@ export function createServer(client: WpClient): McpServer {
           .optional()
           .describe("Free-text search string matched by the WordPress REST API."),
       },
+      annotations: { readOnlyHint: true, openWorldHint: true },
     },
     async ({ page, per_page, after, before, search }) => {
       const params = {
@@ -91,6 +92,7 @@ export function createServer(client: WpClient): McpServer {
             "Numeric WordPress post id returned by ohdsi-weekly-digest_digest_list.",
           ),
       },
+      annotations: { readOnlyHint: true, openWorldHint: true },
     },
     async ({ id }) => {
       let post;
