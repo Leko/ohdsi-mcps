@@ -1,0 +1,49 @@
+{
+  "name": "@ohdsi-mcps/omop-cdm",
+  "version": "0.1.0",
+  "description": "Model Context Protocol server exposing OMOP Common Data Model table and field definitions (versions 5.3, 5.4, 6.0).",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "omop-cdm-mcp": "./dist/server.js"
+  },
+  "main": "./dist/server.js",
+  "exports": {
+    ".": {
+      "types": "./dist/server.d.ts",
+      "default": "./dist/server.js"
+    },
+    "./bundle": {
+      "types": "./dist/bundle.d.ts",
+      "default": "./dist/bundle.js"
+    }
+  },
+  "files": [
+    "dist",
+    "NOTICE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=24.13.0"
+  },
+  "scripts": {
+    "generate-content": "tsx scripts/generate-content.ts",
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "mdast-util-to-string": "^4.0.0",
+    "minisearch": "^7.2.0",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "csv-parse": "^5.6.0"
+  }
+}
