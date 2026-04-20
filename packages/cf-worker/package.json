@@ -8,7 +8,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "deploy:preview": "wrangler versions upload",
+    "deploy:promote": "wrangler versions deploy"
   },
   "dependencies": {
     "@hono/mcp": "^0.2.5",
