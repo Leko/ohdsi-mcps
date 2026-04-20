@@ -1,0 +1,21 @@
+{
+  "name": "@ohdsi-mcps/cf-worker",
+  "version": "0.1.0",
+  "description": "Cloudflare Workers gateway that routes /{slug}/mcp to the OHDSI MCP servers in this monorepo.",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@ohdsi-mcps/book-of-ohdsi": "^0.1.0",
+    "hono": "^4.12.14"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260420.1",
+    "wrangler": "^4.83.0"
+  }
+}
