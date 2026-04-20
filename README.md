@@ -1,6 +1,6 @@
-# ohdsi-mcps
+# OHDSI MCPs
 
-Hosted Model Context Protocol (MCP) servers for the [OHDSI](https://www.ohdsi.org/) ecosystem. One public HTTPS endpoint per server — no Node.js, Docker, or `npx` needed on your machine. Designed for epidemiologists, clinical researchers, and data scientists who already live in R / SQL / Python and want to plug OHDSI context into any MCP-capable AI assistant.
+Hosted Model Context Protocol (MCP) servers for the [OHDSI](https://www.ohdsi.org/) ecosystem. One public HTTPS endpoint per server, with no local install required. Built for anyone in the OHDSI community who wants to plug OHDSI context into an MCP-capable AI assistant.
 
 ## Available servers
 
