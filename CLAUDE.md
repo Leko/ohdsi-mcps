@@ -35,7 +35,7 @@ packages/cf-worker/              Deployment host
 Key flows:
 
 - **Content lifecycle.** `vendor/TheBookOfOhdsi` (git submodule, CC0-1.0) is the upstream snapshot. `scripts/generate-content.ts` reads it once at build time and emits `src/generated/content.ts` with `SOURCE_COMMIT`, `RMD_FILES`, and `CHAPTER_BODIES`. Runtime code never touches `fs` or `git`, so the bundle runs on Cloudflare Workers, Vercel Functions, Deno, Bun, or Node stdio without a compatibility shim.
-- **Server composition.** `createServer(manifest, searchIndex)` registers resources (`toc` static URI + `chapter` `ResourceTemplate`) and tools (`book-of-ohdsi.chapter.list`, `book-of-ohdsi.chapter.read`, `book-of-ohdsi.chapter.search`, following the convention documented in "Tool naming") on an `McpServer`. `createBookOhdsiServer()` in `bundle.ts` is the single entry point hosts consume — it calls `loadManifest()` (sync) and `buildSearchIndex()` (builds MiniSearch from remark-chunked sections) then returns the connected-ready server.
+- **Server composition.** `createServer(manifest, searchIndex)` registers resources (`toc` static URI + `chapter` `ResourceTemplate`) and tools (`book-of-ohdsi_chapter_list`, `book-of-ohdsi_chapter_read`, `book-of-ohdsi_chapter_search`, following the convention documented in "Tool naming") on an `McpServer`. `createBookOhdsiServer()` in `bundle.ts` is the single entry point hosts consume — it calls `loadManifest()` (sync) and `buildSearchIndex()` (builds MiniSearch from remark-chunked sections) then returns the connected-ready server.
 - **Gateway routing.** `packages/cf-worker/src/index.ts` holds a `MCP_REGISTRY` array. For each entry, a single `StreamableHTTPTransport` is memoised per slug and the underlying `McpServer` is connected lazily on first request (`server.isConnected()` guard, per the `@hono/mcp` docs). `GET /` returns a JSON catalog; `GET /health` is a liveness probe.
 - **Error surface.** Unknown chapter URIs throw `McpError(-32002, …)` from inside the `ResourceTemplate` handler so the response matches the MCP spec's "Resource not found" code. Tool argument validation is handled by `McpServer` via the zod shapes passed to `registerTool`.
 
@@ -87,22 +87,22 @@ Whenever you add or remove a tool (or rename one) inside an existing MCP server,
 
 ## Tool naming
 
-Every MCP tool name in this monorepo MUST follow the dot-separated scheme:
+Every MCP tool name in this monorepo MUST follow the underscore-separated scheme:
 
 ```
-<mcp-slug>.<subject>.<method>
+<mcp-slug>_<subject>_<method>
 ```
 
-- `<mcp-slug>` — the server slug exactly as it appears under `packages/` and in the gateway URL path (e.g. `book-of-ohdsi`). Do not abbreviate it. An LLM given a long-but-unambiguous name picks correctly more often than one given a cryptic short name.
-- `<subject>` — the noun the tool operates on (e.g. `chapter`, `concept`). Singular, lowercase, underscores allowed inside a single word.
-- `<method>` — the verb or verb phrase (e.g. `list`, `read`, `search`). Singular, lowercase, underscores allowed.
+- `<mcp-slug>` — the server slug exactly as it appears under `packages/` and in the gateway URL path (e.g. `book-of-ohdsi`). Do not abbreviate it. Hyphens inside the slug are preserved. An LLM given a long-but-unambiguous name picks correctly more often than one given a cryptic short name.
+- `<subject>` — the noun the tool operates on (e.g. `chapter`, `concept`). Singular, lowercase. Avoid inner underscores so the segment boundary stays unambiguous.
+- `<method>` — the verb or verb phrase (e.g. `list`, `read`, `search`). Singular, lowercase. Same underscore-avoidance rule as `<subject>`.
 
-Example: `book-of-ohdsi.chapter.search`.
+Example: `book-of-ohdsi_chapter_search`.
 
 Rationale:
 
-- The leading `<mcp-slug>.` segment makes tool names unique across any future multi-server aggregation (e.g. an all-in-one `/mcp` endpoint), so they can be merged into a single `McpServer` without collisions.
-- The dot separator is spec-legal per the [MCP 2025-11-25 tool-name grammar](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#tool-names) (allowed characters: `A–Z a–z 0–9 _ - .`), and mirrors the spec's own `admin.tools.list` example.
+- The leading `<mcp-slug>_` segment makes tool names unique across any future multi-server aggregation (e.g. an all-in-one `/mcp` endpoint), so they can be merged into a single `McpServer` without collisions.
+- The MCP 2025-11-25 spec allows dots in tool names, but real clients do not: Anthropic's own API rejects tool names that do not match `^[a-zA-Z0-9_-]{1,64}$` (e.g. `tools.N.FrontendRemoteMcpToolDefinition.name: String should match pattern '^[a-zA-Z0-9_-]{1,64}$'`). Underscore is the only separator that is both spec-legal and accepted by the Claude API today.
 - Human-readable, unabbreviated names outperform cryptic ones for LLM tool selection even when they are longer.
 
 When you add a new tool, self-references inside its description and zod `describe()` strings must spell the full tool name the same way. Also add a row for the tool to the top-level `README.md`'s `### Tools` table.

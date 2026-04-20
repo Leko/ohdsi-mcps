@@ -98,17 +98,17 @@ describe("createServer (wired up with InMemoryTransport)", () => {
     }
   });
 
-  it("lists book-of-ohdsi.chapter.list/read/search through tools/list", async () => {
+  it("lists book-of-ohdsi_chapter_list/read/search through tools/list", async () => {
     session = await startSession(manifest, searchIndex);
     const response = await session.client.listTools();
     const names = response.tools.map((t) => t.name).sort();
-    expect(names).toEqual(["book-of-ohdsi.chapter.list", "book-of-ohdsi.chapter.read", "book-of-ohdsi.chapter.search"]);
+    expect(names).toEqual(["book-of-ohdsi_chapter_list", "book-of-ohdsi_chapter_read", "book-of-ohdsi_chapter_search"]);
   });
 
-  it("calls book-of-ohdsi.chapter.list and returns a markdown table", async () => {
+  it("calls book-of-ohdsi_chapter_list and returns a markdown table", async () => {
     session = await startSession(manifest, searchIndex);
     const response = await session.client.callTool({
-      name: "book-of-ohdsi.chapter.list",
+      name: "book-of-ohdsi_chapter_list",
       arguments: {},
     });
     const content = response.content as Array<{ type: string; text: string }>;
@@ -116,10 +116,10 @@ describe("createServer (wired up with InMemoryTransport)", () => {
     expect(content[0]!.text).toContain("book-of-ohdsi://chapter/CommonDataModel");
   });
 
-  it("calls book-of-ohdsi.chapter.read and returns the chapter body with metadata header", async () => {
+  it("calls book-of-ohdsi_chapter_read and returns the chapter body with metadata header", async () => {
     session = await startSession(manifest, searchIndex);
     const response = await session.client.callTool({
-      name: "book-of-ohdsi.chapter.read",
+      name: "book-of-ohdsi_chapter_read",
       arguments: { slug: "CommonDataModel" },
     });
     const content = response.content as Array<{ type: string; text: string }>;
@@ -128,10 +128,10 @@ describe("createServer (wired up with InMemoryTransport)", () => {
     expect(content[0]!.text).toContain("slug: `CommonDataModel`");
   });
 
-  it("returns isError=true when book-of-ohdsi.chapter.read receives an unknown slug", async () => {
+  it("returns isError=true when book-of-ohdsi_chapter_read receives an unknown slug", async () => {
     session = await startSession(manifest, searchIndex);
     const response = await session.client.callTool({
-      name: "book-of-ohdsi.chapter.read",
+      name: "book-of-ohdsi_chapter_read",
       arguments: { slug: "DoesNotExist" },
     });
     expect(response.isError).toBe(true);
@@ -168,7 +168,7 @@ describe("createServer (wired up with InMemoryTransport)", () => {
     let response: unknown = null;
     try {
       response = await session.client.callTool({
-        name: "book-of-ohdsi.chapter.read",
+        name: "book-of-ohdsi_chapter_read",
         arguments: {},
       });
     } catch (error) {
@@ -182,10 +182,10 @@ describe("createServer (wired up with InMemoryTransport)", () => {
     }
   });
 
-  it("calls book-of-ohdsi.chapter.search and returns ranked sections as markdown", async () => {
+  it("calls book-of-ohdsi_chapter_search and returns ranked sections as markdown", async () => {
     session = await startSession(manifest, searchIndex);
     const response = await session.client.callTool({
-      name: "book-of-ohdsi.chapter.search",
+      name: "book-of-ohdsi_chapter_search",
       arguments: { query: "common data model" },
     });
     const content = response.content as Array<{ type: string; text: string }>;
@@ -194,20 +194,20 @@ describe("createServer (wired up with InMemoryTransport)", () => {
     expect(content[0]!.text).toContain("CommonDataModel");
   });
 
-  it("returns a 'no results' message when book-of-ohdsi.chapter.search finds nothing", async () => {
+  it("returns a 'no results' message when book-of-ohdsi_chapter_search finds nothing", async () => {
     session = await startSession(manifest, searchIndex);
     const response = await session.client.callTool({
-      name: "book-of-ohdsi.chapter.search",
+      name: "book-of-ohdsi_chapter_search",
       arguments: { query: "zzzzzzznonexistent" },
     });
     const content = response.content as Array<{ type: string; text: string }>;
     expect(content[0]!.text).toContain("No results");
   });
 
-  it("respects the limit argument on book-of-ohdsi.chapter.search", async () => {
+  it("respects the limit argument on book-of-ohdsi_chapter_search", async () => {
     session = await startSession(manifest, searchIndex);
     const response = await session.client.callTool({
-      name: "book-of-ohdsi.chapter.search",
+      name: "book-of-ohdsi_chapter_search",
       arguments: { query: "data", limit: 2 },
     });
     const content = response.content as Array<{ type: string; text: string }>;

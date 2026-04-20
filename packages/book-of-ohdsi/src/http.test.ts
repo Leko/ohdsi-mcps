@@ -62,9 +62,9 @@ describe("createHttpHandler (Fetch API transport)", () => {
     };
     const names = payload.result.tools.map((t) => t.name).sort();
     expect(names).toEqual([
-      "book-of-ohdsi.chapter.list",
-      "book-of-ohdsi.chapter.read",
-      "book-of-ohdsi.chapter.search",
+      "book-of-ohdsi_chapter_list",
+      "book-of-ohdsi_chapter_read",
+      "book-of-ohdsi_chapter_search",
     ]);
   });
 

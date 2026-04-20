@@ -104,8 +104,8 @@ describe("ohdsi-weekly-digest MCP server", () => {
     const response = await session.client.listTools();
     const names = response.tools.map((t) => t.name).sort();
     expect(names).toEqual([
-      "ohdsi-weekly-digest.digest.list",
-      "ohdsi-weekly-digest.digest.retrieve",
+      "ohdsi-weekly-digest_digest_list",
+      "ohdsi-weekly-digest_digest_retrieve",
     ]);
   });
 
@@ -123,7 +123,7 @@ describe("ohdsi-weekly-digest MCP server", () => {
     session = await startSession(stub);
 
     const response = await session.client.callTool({
-      name: "ohdsi-weekly-digest.digest.list",
+      name: "ohdsi-weekly-digest_digest_list",
       arguments: {
         page: 2,
         per_page: 5,
@@ -141,7 +141,7 @@ describe("ohdsi-weekly-digest MCP server", () => {
   it("returns the full post body via retrieve", async () => {
     session = await startSession(stubClient());
     const response = await session.client.callTool({
-      name: "ohdsi-weekly-digest.digest.retrieve",
+      name: "ohdsi-weekly-digest_digest_retrieve",
       arguments: { id: 37328 },
     });
     const content = response.content as Array<{ type: string; text: string }>;
@@ -159,7 +159,7 @@ describe("ohdsi-weekly-digest MCP server", () => {
     session = await startSession(stub);
 
     const response = await session.client.callTool({
-      name: "ohdsi-weekly-digest.digest.retrieve",
+      name: "ohdsi-weekly-digest_digest_retrieve",
       arguments: { id: 99999 },
     });
 
@@ -177,7 +177,7 @@ describe("ohdsi-weekly-digest MCP server", () => {
     session = await startSession(stub);
 
     const response = await session.client.callTool({
-      name: "ohdsi-weekly-digest.digest.retrieve",
+      name: "ohdsi-weekly-digest_digest_retrieve",
       arguments: { id: 1 },
     });
     // The MCP SDK translates thrown errors into isError=true tool responses.
@@ -187,7 +187,7 @@ describe("ohdsi-weekly-digest MCP server", () => {
   it("rejects malformed arguments via zod validation", async () => {
     session = await startSession(stubClient());
     const response = await session.client.callTool({
-      name: "ohdsi-weekly-digest.digest.retrieve",
+      name: "ohdsi-weekly-digest_digest_retrieve",
       arguments: { id: "not-a-number" as unknown as number },
     });
     const r = response as { isError?: boolean };

@@ -36,11 +36,11 @@ Once the connector is installed, try:
 
 | Server | Tool | Description |
 | --- | --- | --- |
-| `book-of-ohdsi` | `book-of-ohdsi.chapter.list` | List every chapter in reading order with its slug and resource URI. |
-| `book-of-ohdsi` | `book-of-ohdsi.chapter.read` | Return the full R Markdown source of a single chapter by slug. |
-| `book-of-ohdsi` | `book-of-ohdsi.chapter.search` | Full-text search over section-level chunks, powered by MiniSearch. |
-| `ohdsi-weekly-digest` | `ohdsi-weekly-digest.digest.list` | Paginated listing of Weekly Digest posts, filtered by `page` / `per_page` / `after` / `before` / `search`. |
-| `ohdsi-weekly-digest` | `ohdsi-weekly-digest.digest.retrieve` | Fetch the full body of a single Weekly Digest post by numeric id. |
+| `book-of-ohdsi` | `book-of-ohdsi_chapter_list` | List every chapter in reading order with its slug and resource URI. |
+| `book-of-ohdsi` | `book-of-ohdsi_chapter_read` | Return the full R Markdown source of a single chapter by slug. |
+| `book-of-ohdsi` | `book-of-ohdsi_chapter_search` | Full-text search over section-level chunks, powered by MiniSearch. |
+| `ohdsi-weekly-digest` | `ohdsi-weekly-digest_digest_list` | Paginated listing of Weekly Digest posts, filtered by `page` / `per_page` / `after` / `before` / `search`. |
+| `ohdsi-weekly-digest` | `ohdsi-weekly-digest_digest_retrieve` | Fetch the full body of a single Weekly Digest post by numeric id. |
 
 ## Verify from the terminal
 

@@ -8,8 +8,8 @@ The server calls `GET https://www.ohdsi.org/wp-json/wp/v2/posts?categories=1&...
 
 | Name | Arguments | Description |
 | --- | --- | --- |
-| `ohdsi-weekly-digest.digest.list` | `page?`, `per_page?`, `after?`, `before?`, `search?` | Paginated listing of Weekly Digest posts (newest first) as a markdown table of `id`, `date`, `title`, `link`. |
-| `ohdsi-weekly-digest.digest.retrieve` | `id` | Full body of a single Weekly Digest post, identified by the numeric WordPress post id returned by `digest.list`. |
+| `ohdsi-weekly-digest_digest_list` | `page?`, `per_page?`, `after?`, `before?`, `search?` | Paginated listing of Weekly Digest posts (newest first) as a markdown table of `id`, `date`, `title`, `link`. |
+| `ohdsi-weekly-digest_digest_retrieve` | `id` | Full body of a single Weekly Digest post, identified by the numeric WordPress post id returned by `ohdsi-weekly-digest_digest_list`. |
 
 No MCP resources are exposed — the content is inherently dynamic, so reading it through tools (with pagination and filter arguments) matches usage patterns better than a static URI list.
 

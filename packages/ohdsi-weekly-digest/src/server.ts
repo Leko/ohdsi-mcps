@@ -23,11 +23,11 @@ export function createServer(client: WpClient): McpServer {
   const mcp = new McpServer({ name: SERVER_NAME, version: SERVER_VERSION });
 
   mcp.registerTool(
-    "ohdsi-weekly-digest.digest.list",
+    "ohdsi-weekly-digest_digest_list",
     {
       title: "List OHDSI Weekly Digest posts",
       description:
-        "List OHDSI Weekly Digest posts from ohdsi.org (scoped to the Weekly Digest category), newest first. Returns a paginated markdown table of id, date, title, and link. Use `after`/`before` to window by publication date and `search` to narrow by keyword. Call ohdsi-weekly-digest.digest.retrieve with an id to fetch the full body.",
+        "List OHDSI Weekly Digest posts from ohdsi.org (scoped to the Weekly Digest category), newest first. Returns a paginated markdown table of id, date, title, and link. Use `after`/`before` to window by publication date and `search` to narrow by keyword. Call ohdsi-weekly-digest_digest_retrieve with an id to fetch the full body.",
       inputSchema: {
         page: z
           .number()
@@ -77,18 +77,18 @@ export function createServer(client: WpClient): McpServer {
   );
 
   mcp.registerTool(
-    "ohdsi-weekly-digest.digest.retrieve",
+    "ohdsi-weekly-digest_digest_retrieve",
     {
       title: "Retrieve a single OHDSI Weekly Digest post",
       description:
-        "Fetch a single OHDSI Weekly Digest post by its numeric WordPress post id. Returns a markdown header with id/date/slug/link followed by the post body (HTML as published by ohdsi.org). Use ohdsi-weekly-digest.digest.list first to discover ids.",
+        "Fetch a single OHDSI Weekly Digest post by its numeric WordPress post id. Returns a markdown header with id/date/slug/link followed by the post body (HTML as published by ohdsi.org). Use ohdsi-weekly-digest_digest_list first to discover ids.",
       inputSchema: {
         id: z
           .number()
           .int()
           .min(1)
           .describe(
-            "Numeric WordPress post id returned by ohdsi-weekly-digest.digest.list.",
+            "Numeric WordPress post id returned by ohdsi-weekly-digest_digest_list.",
           ),
       },
     },

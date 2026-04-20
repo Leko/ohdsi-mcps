@@ -59,8 +59,8 @@ describe("createHttpHandler (Fetch API transport)", () => {
     };
     const names = payload.result.tools.map((t) => t.name).sort();
     expect(names).toEqual([
-      "ohdsi-weekly-digest.digest.list",
-      "ohdsi-weekly-digest.digest.retrieve",
+      "ohdsi-weekly-digest_digest_list",
+      "ohdsi-weekly-digest_digest_retrieve",
     ]);
   });
 

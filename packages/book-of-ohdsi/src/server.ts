@@ -109,7 +109,7 @@ export function createServer(
   );
 
   mcp.registerTool(
-    "book-of-ohdsi.chapter.list",
+    "book-of-ohdsi_chapter_list",
     {
       title: "List chapters",
       description:
@@ -122,17 +122,17 @@ export function createServer(
   );
 
   mcp.registerTool(
-    "book-of-ohdsi.chapter.read",
+    "book-of-ohdsi_chapter_read",
     {
       title: "Read a chapter",
       description:
-        "Return the full R Markdown source of a single chapter of The Book of OHDSI. Call book-of-ohdsi.chapter.list first if you do not already know the slug.",
+        "Return the full R Markdown source of a single chapter of The Book of OHDSI. Call book-of-ohdsi_chapter_list first if you do not already know the slug.",
       inputSchema: {
         slug: z
           .string()
           .min(1)
           .describe(
-            'Chapter slug returned by book-of-ohdsi.chapter.list (e.g. "CommonDataModel", "StandardizedVocabularies").',
+            'Chapter slug returned by book-of-ohdsi_chapter_list (e.g. "CommonDataModel", "StandardizedVocabularies").',
           ),
       },
     },
@@ -153,11 +153,11 @@ export function createServer(
   );
 
   mcp.registerTool(
-    "book-of-ohdsi.chapter.search",
+    "book-of-ohdsi_chapter_search",
     {
       title: "Full-text search across the book",
       description:
-        "Full-text search across every section of The Book of OHDSI, powered by MiniSearch. Each result is a single section (chapter heading or sub-heading) ranked by TF/IDF with prefix and fuzzy matching enabled. Use this whenever you need to locate which part of the book discusses an OHDSI topic before calling book-of-ohdsi.chapter.read for the full text.",
+        "Full-text search across every section of The Book of OHDSI, powered by MiniSearch. Each result is a single section (chapter heading or sub-heading) ranked by TF/IDF with prefix and fuzzy matching enabled. Use this whenever you need to locate which part of the book discusses an OHDSI topic before calling book-of-ohdsi_chapter_read for the full text.",
       inputSchema: {
         query: z
           .string()
