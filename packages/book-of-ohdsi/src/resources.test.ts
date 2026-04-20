@@ -2,14 +2,8 @@ import { describe, expect, it } from "vitest";
 import type { Manifest } from "./manifest.js";
 import {
   CHAPTER_URI_PREFIX,
-  MIME_MARKDOWN,
-  MIME_RMARKDOWN,
-  TOC_URI,
   chapterUri,
   findChapterBySlug,
-  listResources,
-  parseChapterUri,
-  readResource,
   renderToc,
 } from "./resources.js";
 
@@ -35,40 +29,11 @@ const fakeManifest: Manifest = {
   ],
 };
 
-describe("chapterUri / parseChapterUri", () => {
-  it("round-trips a slug through chapterUri and parseChapterUri", () => {
+describe("chapterUri", () => {
+  it("builds a canonical URI from a chapter slug", () => {
     expect(chapterUri("CommonDataModel")).toBe(
       `${CHAPTER_URI_PREFIX}CommonDataModel`,
     );
-    expect(parseChapterUri(chapterUri("CommonDataModel"))).toBe(
-      "CommonDataModel",
-    );
-  });
-
-  it("returns null when the URI does not belong to the chapter namespace", () => {
-    expect(parseChapterUri(TOC_URI)).toBeNull();
-    expect(parseChapterUri("http://example.com/foo")).toBeNull();
-    expect(parseChapterUri("book-of-ohdsi://unknown")).toBeNull();
-  });
-});
-
-describe("listResources", () => {
-  it("puts the TOC entry first and lists every chapter after", () => {
-    const resources = listResources(fakeManifest);
-    expect(resources).toHaveLength(3);
-
-    expect(resources[0]).toMatchObject({
-      uri: TOC_URI,
-      name: "toc",
-      mimeType: MIME_MARKDOWN,
-    });
-    expect(resources[1]).toMatchObject({
-      uri: `${CHAPTER_URI_PREFIX}index`,
-      name: "index",
-      title: "Preface",
-      mimeType: MIME_RMARKDOWN,
-    });
-    expect(resources[2]?.title).toBe("The Common Data Model");
   });
 });
 
@@ -91,26 +56,5 @@ describe("findChapterBySlug", () => {
 
   it("returns undefined for an unknown slug", () => {
     expect(findChapterBySlug(fakeManifest, "Nope")).toBeUndefined();
-  });
-});
-
-describe("readResource", () => {
-  it("returns the rendered TOC when the URI is book-of-ohdsi://toc", async () => {
-    const result = await readResource(fakeManifest, TOC_URI);
-    expect(result).not.toBeNull();
-    expect(result!.mimeType).toBe(MIME_MARKDOWN);
-    expect(result!.text).toContain(fakeManifest.source.commit);
-  });
-
-  it("returns null for an unknown URI scheme", async () => {
-    expect(await readResource(fakeManifest, "unknown://foo")).toBeNull();
-  });
-
-  it("returns null for a chapter URI whose slug does not exist", async () => {
-    const result = await readResource(
-      fakeManifest,
-      `${CHAPTER_URI_PREFIX}DoesNotExist`,
-    );
-    expect(result).toBeNull();
   });
 });

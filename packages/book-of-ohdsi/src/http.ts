@@ -1,33 +1,24 @@
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import { loadManifest, type Manifest } from "./manifest.js";
-import { buildSearchIndex, type SearchIndex } from "./search.js";
-import { createServer } from "./server.js";
+import { createBookOhdsiServer } from "./bundle.js";
 
 export type HttpHandler = (request: Request) => Promise<Response>;
 
-type Bundle = {
-  manifest: Manifest;
-  searchIndex: SearchIndex;
-};
-
-let bundlePromise: Promise<Bundle> | null = null;
-
-function getBundle(): Promise<Bundle> {
-  if (!bundlePromise) {
-    bundlePromise = (async () => {
-      const manifest = loadManifest();
-      const searchIndex = await buildSearchIndex(manifest);
-      return { manifest, searchIndex };
-    })();
-  }
-  return bundlePromise;
-}
-
+/**
+ * Runtime-agnostic Fetch-API handler for hosts that use the MCP SDK's
+ * Web-Standards transport directly (Vercel Functions, Deno Deploy, bare
+ * Cloudflare Workers without Hono, Bun, ...). For Hono-based deployments
+ * prefer `createBookOhdsiServer()` with `@hono/mcp`'s
+ * `StreamableHTTPTransport` so SSE streams flow through Hono's streaming
+ * helpers.
+ *
+ * The MCP server (and its MiniSearch index) is built once per host isolate,
+ * but a fresh transport + connection is established per request — the
+ * SDK's stateless `WebStandardStreamableHTTPServerTransport` explicitly
+ * forbids reuse.
+ */
 export async function createHttpHandler(): Promise<HttpHandler> {
-  await getBundle();
+  const server = await createBookOhdsiServer();
   return async (request) => {
-    const { manifest, searchIndex } = await getBundle();
-    const server = createServer(manifest, searchIndex);
     const transport = new WebStandardStreamableHTTPServerTransport({
       sessionIdGenerator: undefined,
       enableJsonResponse: true,
@@ -37,7 +28,6 @@ export async function createHttpHandler(): Promise<HttpHandler> {
       return await transport.handleRequest(request);
     } finally {
       await transport.close();
-      await server.close();
     }
   };
 }

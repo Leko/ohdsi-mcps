@@ -13,6 +13,10 @@
       "types": "./dist/server.d.ts",
       "default": "./dist/server.js"
     },
+    "./bundle": {
+      "types": "./dist/bundle.d.ts",
+      "default": "./dist/bundle.js"
+    },
     "./http": {
       "types": "./dist/http.d.ts",
       "default": "./dist/http.js"
