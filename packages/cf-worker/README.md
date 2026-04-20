@@ -5,7 +5,6 @@ Cloudflare Workers gateway that exposes every MCP server in this monorepo over H
 ## Route design
 
 ```
-GET  /                      Catalog (JSON): registered MCP servers with URLs
 GET  /health                Liveness probe
 ALL  /{slug}/mcp            Streamable HTTP endpoint for one MCP server
 ```
@@ -16,7 +15,7 @@ Currently registered:
 | --------------- | ---------------------- | ----------------------------- |
 | `book-of-ohdsi` | `/book-of-ohdsi/mcp`   | `@ohdsi-mcps/book-of-ohdsi`   |
 
-Adding a new MCP is a one-line change in `src/index.ts` once the underlying package exports a `createHttpHandler()` from its `./http` subpath.
+Adding a new MCP is a one-line change in `src/index.ts` once the underlying package exports `createXxxServer(): Promise<McpServer>` from its `./bundle` subpath.
 
 ## Local development
 
@@ -29,7 +28,6 @@ npm run dev --workspace @ohdsi-mcps/cf-worker
 Quick smoke test:
 
 ```sh
-curl http://127.0.0.1:8787/
 curl http://127.0.0.1:8787/health
 curl -X POST http://127.0.0.1:8787/book-of-ohdsi/mcp \
   -H 'content-type: application/json' \

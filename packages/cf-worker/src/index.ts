@@ -7,17 +7,12 @@ import { Hono } from "hono";
 
 type Mcp = {
   slug: string;
-  title: string;
-  description: string;
   createServer: () => Promise<McpServer>;
 };
 
 const MCP_REGISTRY: readonly Mcp[] = [
   {
     slug: "book-of-ohdsi",
-    title: "The Book of OHDSI",
-    description:
-      "MCP server exposing The Book of OHDSI (OHDSI/TheBookOfOhdsi, CC0-1.0) as Resources, Tools (list_chapters, read_chapter, search_book), and full-text search.",
     createServer: createBookOhdsiServer,
   },
 ];
@@ -43,22 +38,6 @@ function getSession(mcp: Mcp): McpSession {
 
 const app = new Hono();
 
-app.get("/", (c) => {
-  const origin = new URL(c.req.url).origin;
-  return c.json({
-    name: "ohdsi-mcps",
-    description:
-      "Gateway for a monorepo of Model Context Protocol servers built for the OHDSI ecosystem.",
-    repository: "https://github.com/Leko/ohdsi-mcps",
-    servers: MCP_REGISTRY.map((mcp) => ({
-      slug: mcp.slug,
-      title: mcp.title,
-      description: mcp.description,
-      endpoint: `${origin}/${mcp.slug}/mcp`,
-    })),
-  });
-});
-
 app.get("/health", (c) => c.json({ ok: true }));
 
 for (const mcp of MCP_REGISTRY) {
@@ -78,7 +57,6 @@ app.notFound((c) =>
       error: "not_found",
       message: `No MCP server is registered at ${new URL(c.req.url).pathname}.`,
       known_endpoints: [
-        "/",
         "/health",
         ...MCP_REGISTRY.map((mcp) => `/${mcp.slug}/mcp`),
       ],

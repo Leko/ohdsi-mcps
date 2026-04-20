@@ -4,68 +4,16 @@ Hosted Model Context Protocol (MCP) servers for the [OHDSI](https://www.ohdsi.or
 
 ## Available servers
 
-| Slug              | Description                                                                                              | MCP endpoint                                                   |
-| ----------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| `book-of-ohdsi`   | The full text of [The Book of OHDSI](https://github.com/OHDSI/TheBookOfOhdsi) exposed as MCP resources + tools (`list_chapters`, `read_chapter`, `search_book` full-text search over section-level chunks). | `https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp`      |
-
-Root catalog (JSON): https://ohdsi-mcps.leko123.workers.dev/
-Liveness: https://ohdsi-mcps.leko123.workers.dev/health
+| Slug            | Description                                                                                            |                                                                                           | MCP endpoint                                               |
+| --------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `book-of-ohdsi` | The full text of [The Book of OHDSI](https://github.com/OHDSI/TheBookOfOhdsi) exposed as MCP resources | `list_chapters`, `read_chapter`, `search_book` full-text search over section-level chunks | `https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp` |
 
 ## Quick install
 
-### Cursor
+Endpoint: `https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp`
 
-[![Add book-of-ohdsi to Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=book-of-ohdsi&config=eyJ1cmwiOiJodHRwczovL29oZHNpLW1jcHMubGVrbzEyMy53b3JrZXJzLmRldi9ib29rLW9mLW9oZHNpL21jcCJ9)
-
-Click the badge to import the configuration. Cursor reads the base64-encoded JSON in the deeplink URL (`cursor://anysphere.cursor-deeplink/mcp/install?name=<name>&config=<base64>`).
-
-### Claude.ai Web (Pro / Team / Enterprise / Max)
-
-1. **Settings → Connectors → Add custom connector**
-2. **Name**: `The Book of OHDSI`
-3. **URL**: `https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp`
-4. Save. The `list_chapters`, `read_chapter`, and `search_book` tools appear in any new conversation.
-
-### Claude Desktop
-
-Edit `claude_desktop_config.json`:
-
-- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-- Linux: `~/.config/Claude/claude_desktop_config.json`
-
-```jsonc
-{
-  "mcpServers": {
-    "book-of-ohdsi": {
-      "type": "http",
-      "url": "https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp"
-    }
-  }
-}
-```
-
-Restart Claude Desktop after saving.
-
-### Claude Code
-
-```sh
-claude mcp add --transport http book-of-ohdsi \
-  https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp
-```
-
-Or check the same block into a project-level `.mcp.json` at the repository root:
-
-```jsonc
-{
-  "mcpServers": {
-    "book-of-ohdsi": {
-      "type": "http",
-      "url": "https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp"
-    }
-  }
-}
-```
+- **claude.ai**: Settings → Connectors → Add custom connector, paste the endpoint.
+- **Claude Code**: `claude mcp add --transport http book-of-ohdsi <endpoint>`.
 
 ## Example prompts
 
@@ -80,9 +28,6 @@ Under the hood the assistant calls `list_chapters` / `read_chapter` / `search_bo
 ## Verify from the terminal
 
 ```sh
-curl https://ohdsi-mcps.leko123.workers.dev/
-curl https://ohdsi-mcps.leko123.workers.dev/health
-
 curl -X POST https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp \
   -H 'content-type: application/json' \
   -H 'accept: application/json, text/event-stream' \
