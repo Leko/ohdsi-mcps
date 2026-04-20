@@ -15,6 +15,20 @@ import {
   type CdmVersion,
 } from "./manifest.js";
 import { documentUri } from "./resources.js";
+import {
+  renderSearchHits,
+  search,
+  type SearchIndex,
+} from "./search.js";
+import type { SearchChunkKind } from "./chunker.js";
+
+export const SEARCH_LIMIT_DEFAULT = 10;
+export const SEARCH_LIMIT_MAX = 50;
+export const SEARCH_KINDS = [
+  "rmd",
+  "csv-table",
+  "csv-field",
+] as const satisfies readonly SearchChunkKind[];
 
 export class UnknownVersionError extends Error {
   constructor(readonly version: string) {
@@ -197,4 +211,21 @@ export function callReadDocument(input: { slug: string }): string {
     );
   }
   return renderReadDocument(doc);
+}
+
+export function callSearch(
+  index: SearchIndex,
+  input: {
+    query: string;
+    limit?: number | undefined;
+    kinds?: readonly SearchChunkKind[] | undefined;
+  },
+): string {
+  const limit = input.limit ?? SEARCH_LIMIT_DEFAULT;
+  const hits = search(index, {
+    query: input.query,
+    limit,
+    kinds: input.kinds,
+  });
+  return renderSearchHits(hits, input.query);
 }

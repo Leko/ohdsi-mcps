@@ -1,11 +1,18 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 
+import { buildSearchIndex, type SearchIndex } from "./search.js";
 import { SERVER_NAME, SERVER_VERSION, createServer } from "./server.js";
 
+let sharedIndex: SearchIndex;
+
+beforeAll(() => {
+  sharedIndex = buildSearchIndex();
+});
+
 async function startSession() {
-  const server = createServer();
+  const server = createServer(sharedIndex);
   const [clientTransport, serverTransport] =
     InMemoryTransport.createLinkedPair();
   const mcpClient = new Client({ name: "test-client", version: "0.0.0" });
@@ -51,6 +58,7 @@ describe("omop-cdm MCP server", () => {
       "omop-cdm_document_list",
       "omop-cdm_document_read",
       "omop-cdm_field_list",
+      "omop-cdm_search",
       "omop-cdm_table_list",
     ]);
   });
@@ -172,5 +180,36 @@ describe("omop-cdm MCP server", () => {
     await expect(
       session.client.readResource({ uri: "omop-cdm://document/does-not-exist" }),
     ).rejects.toThrow();
+  });
+
+  it("searches across Rmd and CSV content and returns markdown hits", async () => {
+    session = await startSession();
+    const response = await session.client.callTool({
+      name: "omop-cdm_search",
+      arguments: { query: "gender_concept_id", limit: 5 },
+    });
+    expect(response.isError).toBeFalsy();
+    const content = response.content as Array<{ type: string; text: string }>;
+    expect(content[0]!.text).toMatch(/result/);
+    // We should find at least one CSV field row reference for gender_concept_id
+    expect(content[0]!.text).toContain("gender_concept_id");
+  });
+
+  it("scopes search to a specific kind via `kinds`", async () => {
+    session = await startSession();
+    const response = await session.client.callTool({
+      name: "omop-cdm_search",
+      arguments: {
+        query: "person",
+        limit: 5,
+        kinds: ["csv-table"],
+      },
+    });
+    expect(response.isError).toBeFalsy();
+    const content = response.content as Array<{ type: string; text: string }>;
+    // csv-table category strings look like "v5.4 / table / person"
+    expect(content[0]!.text).toMatch(/v\d\.\d \/ table \//);
+    expect(content[0]!.text).not.toMatch(/v\d\.\d \/ field \//);
+    expect(content[0]!.text).not.toMatch(/document \//);
   });
 });

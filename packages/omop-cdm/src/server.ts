@@ -23,13 +23,18 @@ import {
   documentUri,
   renderToc,
 } from "./resources.js";
+import { buildSearchIndex, type SearchIndex } from "./search.js";
 import {
+  SEARCH_KINDS,
+  SEARCH_LIMIT_DEFAULT,
+  SEARCH_LIMIT_MAX,
   UnknownDocumentError,
   UnknownTableError,
   UnknownVersionError,
   callListFields,
   callListTables,
   callReadDocument,
+  callSearch,
   renderListDocuments,
 } from "./tools.js";
 
@@ -51,7 +56,7 @@ function firstString(value: string | string[] | undefined): string | undefined {
   return value;
 }
 
-export function createServer(): McpServer {
+export function createServer(searchIndex: SearchIndex): McpServer {
   const mcp = new McpServer({ name: SERVER_NAME, version: SERVER_VERSION });
 
   mcp.registerResource(
@@ -203,7 +208,7 @@ export function createServer(): McpServer {
           .string()
           .min(1)
           .describe(
-            'Document slug returned by omop-cdm_document_list (e.g. "cdm54", "cdm54Changes", "dataModelConventions"). Matched case-insensitively.',
+            'Document slug returned by omop-cdm_document_list (e.g. "cdm54Changes", "dataModelConventions"). Matched case-insensitively.',
           ),
       },
       annotations: { readOnlyHint: true, openWorldHint: false },
@@ -224,6 +229,48 @@ export function createServer(): McpServer {
     },
   );
 
+  mcp.registerTool(
+    "omop-cdm_search",
+    {
+      title: "Full-text search across OMOP CDM content",
+      description:
+        `Full-text search across every OMOP CDM R Markdown section (chunked by heading) and every CSV row (one chunk per table row and per field row, for all supported versions ${SUPPORTED_VERSIONS.join(", ")}), powered by MiniSearch with prefix and fuzzy matching. Each hit is returned with a title, category, score, and a short snippet. Use the optional \`kinds\` filter to scope to documents ("rmd"), table rows ("csv-table"), or field rows ("csv-field"). Call omop-cdm_document_read or omop-cdm_field_list afterwards for the full context of a promising hit.`,
+      inputSchema: {
+        query: z
+          .string()
+          .min(1)
+          .describe(
+            "Free-text search query. Prefix and fuzzy matching are applied automatically.",
+          ),
+        limit: z
+          .number()
+          .int()
+          .min(1)
+          .max(SEARCH_LIMIT_MAX)
+          .optional()
+          .describe(
+            `Maximum number of matches to return (default ${SEARCH_LIMIT_DEFAULT}, max ${SEARCH_LIMIT_MAX}).`,
+          ),
+        kinds: z
+          .array(z.enum(SEARCH_KINDS))
+          .min(1)
+          .optional()
+          .describe(
+            `Optional filter limiting results to specific chunk kinds. Allowed values: ${SEARCH_KINDS.join(", ")}. When omitted, results include every kind.`,
+          ),
+      },
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
+    ({ query, limit, kinds }) => ({
+      content: [
+        {
+          type: "text",
+          text: callSearch(searchIndex, { query, limit, kinds }),
+        },
+      ],
+    }),
+  );
+
   return mcp;
 }
 
@@ -234,7 +281,8 @@ function isMainModule(): boolean {
 }
 
 async function main(): Promise<void> {
-  const server = createServer();
+  const index = buildSearchIndex();
+  const server = createServer(index);
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }

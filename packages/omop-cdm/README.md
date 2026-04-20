@@ -20,6 +20,7 @@ shim.
 | `omop-cdm_field_list` | List every field (column) of a single OMOP CDM table for a given `version` (defaults to `5.4`). Returns a markdown table of field name, datatype, required flag, primary-key flag, and foreign-key target. |
 | `omop-cdm_document_list` | List every R Markdown document shipped alongside the CommonDataModel repository (change logs, conventions, FAQ, …) with its slug and MCP resource URI. |
 | `omop-cdm_document_read` | Return the full R Markdown source of a single OMOP CDM document by slug. |
+| `omop-cdm_search` | Full-text search across R Markdown sections (chunked by heading) and every CSV row (one chunk per table row and per field row, for all supported versions). Supports an optional `kinds` filter scoping results to `rmd`, `csv-table`, or `csv-field`. |
 
 All tools are read-only (`readOnlyHint: true`) and operate on a closed,
 bundled corpus (`openWorldHint: false`).

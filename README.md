@@ -52,6 +52,7 @@ Once the connector is installed, try:
 | `omop-cdm` | `omop-cdm_field_list` | List every field of a single OMOP CDM table for a given version (defaults to 5.4). |
 | `omop-cdm` | `omop-cdm_document_list` | List every R Markdown document shipped alongside OHDSI/CommonDataModel (change logs, conventions, FAQ, …). |
 | `omop-cdm` | `omop-cdm_document_read` | Return the full R Markdown source of a single OMOP CDM document by slug. |
+| `omop-cdm` | `omop-cdm_search` | Full-text search (MiniSearch) across R Markdown sections and CSV rows (one chunk per table row and per field row), with an optional `kinds` filter. |
 
 ## Verify from the terminal
 
