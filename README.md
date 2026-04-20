@@ -35,6 +35,12 @@ curl -X POST https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
 ```
 
+## FAQ
+
+### Is there a tool for searching vocabulary concepts?
+
+Not in this repository. [`OHDSI/Hecate`](https://github.com/OHDSI/Hecate) is a semantic search engine for the OHDSI vocabulary and ships its own MCP server — check that out if you need concept lookup.
+
 ## Development
 
 Contributor documentation — project layout, architecture, quality gate, and instructions for adding a new MCP server — lives in [`CLAUDE.md`](./CLAUDE.md). Each workspace also has its own README:
