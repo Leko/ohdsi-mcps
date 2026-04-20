@@ -21,6 +21,8 @@ npm run test    # full vitest suite
 
 If any command fails, fix the root cause and rerun until everything is green before calling the task done.
 
+Once the quality gate is green, also run `npm run test:coverage` and report both a concise summary of the change and the resulting coverage metrics (overall percentage plus any notable per-file gaps). The coverage report accompanies every "done" announcement.
+
 ## Project conventions
 
 - Node.js 24 LTS (see `.nvmrc`)
