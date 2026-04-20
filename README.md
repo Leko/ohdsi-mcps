@@ -27,9 +27,9 @@ Once the connector is installed, try:
 
 **OMOP CDM**
 
-- "List every OMOP CDM v5.4 table."
+- "What does the `_source_value` column convention mean in OMOP CDM, and when should I populate it?"
 - "Show me every column of the `visit_occurrence` table in OMOP CDM 5.3."
-- "Summarise what changed between OMOP CDM 5.3 and 5.4 using the bundled R Markdown documents."
+- "Which OMOP CDM 5.4 fields are foreign keys to `CONCEPT.CONCEPT_ID` with the `Gender` domain?"
 
 ## Available servers
 
