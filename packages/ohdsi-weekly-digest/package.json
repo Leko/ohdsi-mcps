@@ -1,0 +1,43 @@
+{
+  "name": "@ohdsi-mcps/ohdsi-weekly-digest",
+  "version": "0.1.0",
+  "description": "Model Context Protocol server exposing the OHDSI Weekly Digest blog posts via the ohdsi.org WordPress REST API.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "ohdsi-weekly-digest-mcp": "./dist/server.js"
+  },
+  "main": "./dist/server.js",
+  "exports": {
+    ".": {
+      "types": "./dist/server.d.ts",
+      "default": "./dist/server.js"
+    },
+    "./bundle": {
+      "types": "./dist/bundle.d.ts",
+      "default": "./dist/bundle.js"
+    },
+    "./http": {
+      "types": "./dist/http.d.ts",
+      "default": "./dist/http.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=24.13.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.3.6"
+  }
+}

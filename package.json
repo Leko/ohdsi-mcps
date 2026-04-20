@@ -9,7 +9,9 @@
     "node": ">=24.13.0"
   },
   "workspaces": [
-    "packages/*"
+    "packages/book-of-ohdsi",
+    "packages/ohdsi-weekly-digest",
+    "packages/cf-worker"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",

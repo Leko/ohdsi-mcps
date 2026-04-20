@@ -3,6 +3,10 @@
     "book-of-ohdsi": {
       "command": "node",
       "args": ["./packages/book-of-ohdsi/dist/server.js"]
+    },
+    "ohdsi-weekly-digest": {
+      "command": "node",
+      "args": ["./packages/ohdsi-weekly-digest/dist/server.js"]
     }
   }
 }

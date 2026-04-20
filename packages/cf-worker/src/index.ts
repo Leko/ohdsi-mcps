@@ -3,6 +3,7 @@ import {
   createBookOhdsiServer,
   type McpServer,
 } from "@ohdsi-mcps/book-of-ohdsi/bundle";
+import { createOhdsiWeeklyDigestServer } from "@ohdsi-mcps/ohdsi-weekly-digest/bundle";
 import { Hono } from "hono";
 
 type Mcp = {
@@ -14,6 +15,10 @@ const MCP_REGISTRY: readonly Mcp[] = [
   {
     slug: "book-of-ohdsi",
     createServer: createBookOhdsiServer,
+  },
+  {
+    slug: "ohdsi-weekly-digest",
+    createServer: createOhdsiWeeklyDigestServer,
   },
 ];
 

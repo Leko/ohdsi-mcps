@@ -7,6 +7,7 @@ Hosted Model Context Protocol (MCP) servers for the [OHDSI](https://www.ohdsi.or
 | Slug            | Description                                                                                            |                                                                                           | MCP endpoint                                               |
 | --------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
 | `book-of-ohdsi` | The full text of [The Book of OHDSI](https://github.com/OHDSI/TheBookOfOhdsi) exposed as MCP resources | `book-of-ohdsi.chapter.list`, `book-of-ohdsi.chapter.read`, `book-of-ohdsi.chapter.search` (full-text search over section-level chunks) | `https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp` |
+| `ohdsi-weekly-digest` | The [OHDSI Weekly Digest](https://www.ohdsi.org/category/weekly-digest/) blog posts, fetched live from the ohdsi.org WordPress REST API | `ohdsi-weekly-digest.digest.list` (paginated listing with `page`/`per_page`/`after`/`before`/`search` filters), `ohdsi-weekly-digest.digest.retrieve` (single post by id) | `https://ohdsi-mcps.leko123.workers.dev/ohdsi-weekly-digest/mcp` |
 
 ## Quick install
 
@@ -39,6 +40,7 @@ curl -X POST https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp \
 Contributor documentation — project layout, architecture, quality gate, and instructions for adding a new MCP server — lives in [`CLAUDE.md`](./CLAUDE.md). Each workspace also has its own README:
 
 - [`packages/book-of-ohdsi/`](./packages/book-of-ohdsi/README.md) — MCP server for The Book of OHDSI.
+- [`packages/ohdsi-weekly-digest/`](./packages/ohdsi-weekly-digest/README.md) — MCP server for the OHDSI Weekly Digest blog posts on ohdsi.org.
 - [`packages/cf-worker/`](./packages/cf-worker/README.md) — Cloudflare Workers gateway that hosts every MCP server in this monorepo under a single `workers.dev` subdomain.
 
 ## License
