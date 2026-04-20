@@ -144,3 +144,6 @@ vite.config.ts.timestamp-*
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Claude Code local, machine-specific settings
+.claude/settings.local.json
