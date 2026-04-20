@@ -1,0 +1,25 @@
+{
+  "name": "ohdsi-mcps",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Monorepo of Model Context Protocol servers for OHDSI resources and tools.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=24.13.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.2",
+    "@vitest/coverage-v8": "^4.1.4",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.4"
+  }
+}
