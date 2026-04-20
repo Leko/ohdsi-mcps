@@ -1,0 +1,3 @@
+[submodule "packages/book-of-ohdsi/vendor/TheBookOfOhdsi"]
+	path = packages/book-of-ohdsi/vendor/TheBookOfOhdsi
+	url = https://github.com/OHDSI/TheBookOfOhdsi.git

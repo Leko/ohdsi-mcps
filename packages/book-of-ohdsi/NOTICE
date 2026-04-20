@@ -1,0 +1,13 @@
+@ohdsi-mcps/book-of-ohdsi
+Copyright (c) 2026 Shingo Inoue
+
+This package is licensed under the Apache License, Version 2.0.
+
+The content vendored at `vendor/TheBookOfOhdsi/` (git submodule) is sourced from:
+  The Book of OHDSI
+  https://github.com/OHDSI/TheBookOfOhdsi
+  Licensed under Creative Commons Zero v1.0 Universal (CC0-1.0).
+
+The Book of OHDSI content is reproduced here unmodified for the purpose of
+exposing it through the Model Context Protocol. CC0-1.0 imposes no attribution
+requirement; the credit above is voluntary.

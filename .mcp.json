@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "book-of-ohdsi": {
+      "command": "node",
+      "args": ["./packages/book-of-ohdsi/dist/server.js"]
+    }
+  }
+}

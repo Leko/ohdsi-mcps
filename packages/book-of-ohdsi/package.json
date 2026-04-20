@@ -1,0 +1,34 @@
+{
+  "name": "@ohdsi-mcps/book-of-ohdsi",
+  "version": "0.1.0",
+  "description": "Model Context Protocol server exposing The Book of OHDSI as resources.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "book-of-ohdsi-mcp": "./dist/server.js"
+  },
+  "main": "./dist/server.js",
+  "files": [
+    "dist",
+    "vendor/TheBookOfOhdsi/_bookdown.yml",
+    "vendor/TheBookOfOhdsi/*.Rmd",
+    "vendor/TheBookOfOhdsi/LICENSE",
+    "NOTICE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=24.13.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "yaml": "^2.8.3",
+    "zod": "^4.3.6"
+  }
+}
