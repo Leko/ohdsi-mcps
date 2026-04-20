@@ -1,11 +1,15 @@
-import { createHttpHandler } from "@ohdsi-mcps/book-of-ohdsi/http";
+import { StreamableHTTPTransport } from "@hono/mcp";
+import {
+  createBookOhdsiServer,
+  type McpServer,
+} from "@ohdsi-mcps/book-of-ohdsi/bundle";
 import { Hono } from "hono";
 
 type Mcp = {
   slug: string;
   title: string;
   description: string;
-  createHandler: typeof createHttpHandler;
+  createServer: () => Promise<McpServer>;
 };
 
 const MCP_REGISTRY: readonly Mcp[] = [
@@ -14,25 +18,33 @@ const MCP_REGISTRY: readonly Mcp[] = [
     title: "The Book of OHDSI",
     description:
       "MCP server exposing The Book of OHDSI (OHDSI/TheBookOfOhdsi, CC0-1.0) as Resources, Tools (list_chapters, read_chapter, search_book), and full-text search.",
-    createHandler: createHttpHandler,
+    createServer: createBookOhdsiServer,
   },
 ];
 
-const handlerCache = new Map<string, Promise<(req: Request) => Promise<Response>>>();
+type McpSession = {
+  serverPromise: Promise<McpServer>;
+  transport: StreamableHTTPTransport;
+};
 
-function getHandler(mcp: Mcp) {
-  let cached = handlerCache.get(mcp.slug);
-  if (!cached) {
-    cached = mcp.createHandler();
-    handlerCache.set(mcp.slug, cached);
+const sessions = new Map<string, McpSession>();
+
+function getSession(mcp: Mcp): McpSession {
+  let session = sessions.get(mcp.slug);
+  if (!session) {
+    session = {
+      serverPromise: mcp.createServer(),
+      transport: new StreamableHTTPTransport(),
+    };
+    sessions.set(mcp.slug, session);
   }
-  return cached;
+  return session;
 }
 
 const app = new Hono();
 
 app.get("/", (c) => {
-  const url = new URL(c.req.url);
+  const origin = new URL(c.req.url).origin;
   return c.json({
     name: "ohdsi-mcps",
     description:
@@ -42,7 +54,7 @@ app.get("/", (c) => {
       slug: mcp.slug,
       title: mcp.title,
       description: mcp.description,
-      endpoint: new URL(`/${mcp.slug}/mcp`, url.origin).toString(),
+      endpoint: `${origin}/${mcp.slug}/mcp`,
     })),
   });
 });
@@ -51,8 +63,12 @@ app.get("/health", (c) => c.json({ ok: true }));
 
 for (const mcp of MCP_REGISTRY) {
   app.all(`/${mcp.slug}/mcp`, async (c) => {
-    const handler = await getHandler(mcp);
-    return handler(c.req.raw);
+    const session = getSession(mcp);
+    const server = await session.serverPromise;
+    if (!server.isConnected()) {
+      await server.connect(session.transport);
+    }
+    return session.transport.handleRequest(c);
   });
 }
 
