@@ -35,8 +35,7 @@ packages/cf-worker/              Deployment host
 Key flows:
 
 - **Content lifecycle.** `vendor/TheBookOfOhdsi` (git submodule, CC0-1.0) is the upstream snapshot. `scripts/generate-content.ts` reads it once at build time and emits `src/generated/content.ts` with `SOURCE_COMMIT`, `RMD_FILES`, and `CHAPTER_BODIES`. Runtime code never touches `fs` or `git`, so the bundle runs on Cloudflare Workers, Vercel Functions, Deno, Bun, or Node stdio without a compatibility shim.
-- **Server composition.** `createServer(manifest, searchIndex)` registers resources (`toc` static URI + `chapter` `ResourceTemplate`) and tools (`book-of-ohdsi.chapter.list`, `book-of-ohdsi.chapter.read`, `book-of-ohdsi.chapter.search`) on an `McpServer`. `createBookOhdsiServer()` in `bundle.ts` is the single entry point hosts consume — it calls `loadManifest()` (sync) and `buildSearchIndex()` (builds MiniSearch from remark-chunked sections) then returns the connected-ready server.
-- **Tool naming.** Every tool name uses the dot-separated `<mcp-slug>.<subject>.<method>` scheme (e.g. `book-of-ohdsi.chapter.search`). The leading `<mcp-slug>` segment matches the server slug and future-proofs tool names against cross-server collisions if multiple MCPs are ever aggregated behind a single endpoint. New tools must follow the same convention.
+- **Server composition.** `createServer(manifest, searchIndex)` registers resources (`toc` static URI + `chapter` `ResourceTemplate`) and tools (`book-of-ohdsi.chapter.list`, `book-of-ohdsi.chapter.read`, `book-of-ohdsi.chapter.search`, following the convention documented in "Tool naming") on an `McpServer`. `createBookOhdsiServer()` in `bundle.ts` is the single entry point hosts consume — it calls `loadManifest()` (sync) and `buildSearchIndex()` (builds MiniSearch from remark-chunked sections) then returns the connected-ready server.
 - **Gateway routing.** `packages/cf-worker/src/index.ts` holds a `MCP_REGISTRY` array. For each entry, a single `StreamableHTTPTransport` is memoised per slug and the underlying `McpServer` is connected lazily on first request (`server.isConnected()` guard, per the `@hono/mcp` docs). `GET /` returns a JSON catalog; `GET /health` is a liveness probe.
 - **Error surface.** Unknown chapter URIs throw `McpError(-32002, …)` from inside the `ResourceTemplate` handler so the response matches the MCP spec's "Resource not found" code. Tool argument validation is handled by `McpServer` via the zod shapes passed to `registerTool`.
 
@@ -83,6 +82,28 @@ npm run deploy --workspace @ohdsi-mcps/cf-worker
 MCP packages must remain Hono-agnostic; put Hono-specific wiring in `cf-worker` (or any other future transport host).
 
 Whenever you add or remove a tool (or rename one) inside an existing MCP server, also update the matching row in the `## Available servers` table so the documented tool list stays in sync with the implementation.
+
+## Tool naming
+
+Every MCP tool name in this monorepo MUST follow the dot-separated scheme:
+
+```
+<mcp-slug>.<subject>.<method>
+```
+
+- `<mcp-slug>` — the server slug exactly as it appears under `packages/` and in the gateway URL path (e.g. `book-of-ohdsi`). Do not abbreviate it. An LLM given a long-but-unambiguous name picks correctly more often than one given a cryptic short name.
+- `<subject>` — the noun the tool operates on (e.g. `chapter`, `concept`). Singular, lowercase, underscores allowed inside a single word.
+- `<method>` — the verb or verb phrase (e.g. `list`, `read`, `search`). Singular, lowercase, underscores allowed.
+
+Example: `book-of-ohdsi.chapter.search`.
+
+Rationale:
+
+- The leading `<mcp-slug>.` segment makes tool names unique across any future multi-server aggregation (e.g. an all-in-one `/mcp` endpoint), so they can be merged into a single `McpServer` without collisions.
+- The dot separator is spec-legal per the [MCP 2025-11-25 tool-name grammar](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#tool-names) (allowed characters: `A–Z a–z 0–9 _ - .`), and mirrors the spec's own `admin.tools.list` example.
+- Human-readable, unabbreviated names outperform cryptic ones for LLM tool selection even when they are longer.
+
+When you add a new tool, self-references inside its description and zod `describe()` strings must spell the full tool name the same way. Also update the tool list in the top-level `README.md`'s "Available servers" table.
 
 ## Dependency management
 
