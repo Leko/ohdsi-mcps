@@ -10,10 +10,10 @@ Hosted Model Context Protocol (MCP) servers for the [OHDSI](https://www.ohdsi.or
 
 ## Quick install
 
-Endpoint: `https://ohdsi-mcps.leko123.workers.dev/book-of-ohdsi/mcp`
+Endpoint pattern: `https://ohdsi-mcps.leko123.workers.dev/<slug>/mcp` — pick the slug of the server you want to connect from the table above (e.g. `book-of-ohdsi` for The Book of OHDSI).
 
 - **claude.ai**: Settings → Connectors → Add custom connector, paste the endpoint.
-- **Claude Code**: `claude mcp add --transport http book-of-ohdsi <endpoint>`.
+- **Claude Code**: `claude mcp add --transport http <slug> <endpoint>`.
 
 ## Example prompts
 
