@@ -31,7 +31,7 @@ export type Manifest = {
   chapters: ChapterEntry[];
 };
 
-export const vendorDir = resolve(
+const vendorDir = resolve(
   dirname(fileURLToPath(import.meta.url)),
   "..",
   "vendor",

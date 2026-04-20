@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { fileURLToPath } from "node:url";
+import { pathToFileURL } from "node:url";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
@@ -86,6 +86,12 @@ export function createServer(manifest: Manifest): Server {
   return server;
 }
 
+export function isMainModule(): boolean {
+  const entry = process.argv[1];
+  if (!entry) return false;
+  return import.meta.url === pathToFileURL(entry).href;
+}
+
 async function main(): Promise<void> {
   const manifest = await loadManifest();
   const server = createServer(manifest);
@@ -93,6 +99,6 @@ async function main(): Promise<void> {
   await server.connect(transport);
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+if (isMainModule()) {
   await main();
 }

@@ -69,7 +69,7 @@ export const readChapterTool = {
   },
 } as const;
 
-export type ReadChapterInput = z.infer<typeof readChapterInputSchema>;
+type ReadChapterInput = z.infer<typeof readChapterInputSchema>;
 
 export function parseReadChapterInput(input: unknown): ReadChapterInput {
   return readChapterInputSchema.parse(input ?? {});

@@ -1,7 +1,7 @@
 import type { ChapterEntry, Manifest } from "./manifest.js";
 import { loadChapterBody } from "./manifest.js";
 
-export const URI_SCHEME = "book-of-ohdsi";
+const URI_SCHEME = "book-of-ohdsi";
 export const TOC_URI = `${URI_SCHEME}://toc`;
 export const CHAPTER_URI_PREFIX = `${URI_SCHEME}://chapter/`;
 export const MIME_MARKDOWN = "text/markdown";
@@ -60,7 +60,7 @@ export function findChapterBySlug(
   return manifest.chapters.find((chapter) => chapter.slug === slug);
 }
 
-export type ReadResult = {
+type ReadResult = {
   uri: string;
   mimeType: string;
   text: string;
