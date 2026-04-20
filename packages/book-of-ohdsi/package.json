@@ -8,6 +8,16 @@
     "book-of-ohdsi-mcp": "./dist/server.js"
   },
   "main": "./dist/server.js",
+  "exports": {
+    ".": {
+      "types": "./dist/server.d.ts",
+      "default": "./dist/server.js"
+    },
+    "./http": {
+      "types": "./dist/http.d.ts",
+      "default": "./dist/http.js"
+    }
+  },
   "files": [
     "dist",
     "NOTICE",
