@@ -20,11 +20,17 @@ Endpoint pattern: `https://ohdsi-mcps.leko123.workers.dev/<slug>/mcp` — pick t
 
 Once the connector is installed, try:
 
+**Book of OHDSI** (`book-of-ohdsi.chapter.list` / `.read` / `.search`)
+
 - "List every chapter of The Book of OHDSI."
 - "Explain the OMOP Common Data Model visit_occurrence table based on The Book of OHDSI."
 - "Which chapter discusses propensity-score calibration? Quote the relevant passage."
 
-Under the hood the assistant calls `book-of-ohdsi.chapter.list` / `book-of-ohdsi.chapter.read` / `book-of-ohdsi.chapter.search` against the hosted server.
+**OHDSI Weekly Digest** (`ohdsi-weekly-digest.digest.list` / `.retrieve`)
+
+- "What were the OHDSI community highlights in the last month?"
+- "Summarise every OHDSI Weekly Digest posted after 2026-01-01."
+- "Find the Weekly Digest entries that mention Phenotype Phebruary and quote what they said."
 
 ## Verify from the terminal
 
