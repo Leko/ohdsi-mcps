@@ -77,11 +77,13 @@ npm run deploy --workspace @ohdsi-mcps/cf-worker
 2. Export `create<Name>Server(): Promise<McpServer>` from `src/bundle.ts`, and re-export `McpServer` as a type so hosts do not need to depend on `@modelcontextprotocol/sdk` directly.
 3. Expose `./bundle` in the package's `exports` map.
 4. Append an entry to `MCP_REGISTRY` in `packages/cf-worker/src/index.ts` pointing at that factory. The route `/{slug}/mcp` is wired automatically.
-5. Update the `## Available servers` table in the top-level `README.md` so end users can discover the new server and its current tool set.
+5. Update the top-level `README.md` so end users can discover the new server and its tools. Two tables must stay in sync with the implementation:
+   - `## Available servers` — one row per server (slug, one-line description, MCP endpoint).
+   - `### Tools` (nested under `## Available servers`) — one row per tool (server slug, fully-qualified tool name, one-line description).
 
 MCP packages must remain Hono-agnostic; put Hono-specific wiring in `cf-worker` (or any other future transport host).
 
-Whenever you add or remove a tool (or rename one) inside an existing MCP server, also update the matching row in the `## Available servers` table so the documented tool list stays in sync with the implementation.
+Whenever you add or remove a tool (or rename one) inside an existing MCP server, also update the matching row in the `### Tools` table so the documented tool list stays in sync with the implementation.
 
 ## Tool naming
 
@@ -103,7 +105,7 @@ Rationale:
 - The dot separator is spec-legal per the [MCP 2025-11-25 tool-name grammar](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#tool-names) (allowed characters: `A–Z a–z 0–9 _ - .`), and mirrors the spec's own `admin.tools.list` example.
 - Human-readable, unabbreviated names outperform cryptic ones for LLM tool selection even when they are longer.
 
-When you add a new tool, self-references inside its description and zod `describe()` strings must spell the full tool name the same way. Also update the tool list in the top-level `README.md`'s "Available servers" table.
+When you add a new tool, self-references inside its description and zod `describe()` strings must spell the full tool name the same way. Also add a row for the tool to the top-level `README.md`'s `### Tools` table.
 
 ## Dependency management
 
