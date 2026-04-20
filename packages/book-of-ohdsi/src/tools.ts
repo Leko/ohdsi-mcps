@@ -1,9 +1,15 @@
 import { z } from "zod";
 import { loadChapterBody, type Manifest } from "./manifest.js";
 import { chapterUri, findChapterBySlug } from "./resources.js";
+import {
+  renderSearchHits,
+  searchBook,
+  type SearchIndex,
+} from "./search.js";
 
 export const LIST_CHAPTERS_TOOL_NAME = "list_chapters";
 export const READ_CHAPTER_TOOL_NAME = "read_chapter";
+export const SEARCH_BOOK_TOOL_NAME = "search_book";
 
 const listChaptersInputSchema = z.object({}).strict();
 
@@ -111,4 +117,66 @@ export async function callReadChapter(
     "",
   ].join("\n");
   return header + body;
+}
+
+const SEARCH_LIMIT_DEFAULT = 5;
+const SEARCH_LIMIT_MAX = 50;
+
+const searchBookInputSchema = z
+  .object({
+    query: z
+      .string()
+      .min(1)
+      .describe(
+        "Free-text search query. Prefix and fuzzy matching are enabled so partial and slightly misspelled terms still match.",
+      ),
+    limit: z
+      .number()
+      .int()
+      .min(1)
+      .max(SEARCH_LIMIT_MAX)
+      .optional()
+      .describe(
+        `Maximum number of matches to return (default ${SEARCH_LIMIT_DEFAULT}, max ${SEARCH_LIMIT_MAX}).`,
+      ),
+  })
+  .strict();
+
+export const searchBookTool = {
+  name: SEARCH_BOOK_TOOL_NAME,
+  description:
+    "Full-text search across every section of The Book of OHDSI, powered by MiniSearch. Each result is a single section (chapter heading or sub-heading) ranked by TF/IDF with prefix and fuzzy matching enabled. Use this whenever you need to locate which part of the book discusses an OHDSI topic before calling read_chapter for the full text.",
+  inputSchema: {
+    type: "object",
+    properties: {
+      query: {
+        type: "string",
+        description:
+          "Free-text search query. Prefix and fuzzy matching are applied automatically.",
+      },
+      limit: {
+        type: "number",
+        description: `Maximum number of matches to return (default ${SEARCH_LIMIT_DEFAULT}, max ${SEARCH_LIMIT_MAX}).`,
+        minimum: 1,
+        maximum: SEARCH_LIMIT_MAX,
+      },
+    },
+    required: ["query"],
+    additionalProperties: false,
+  },
+} as const;
+
+type SearchBookInput = z.infer<typeof searchBookInputSchema>;
+
+export function parseSearchBookInput(input: unknown): SearchBookInput {
+  return searchBookInputSchema.parse(input ?? {});
+}
+
+export function callSearchBook(
+  index: SearchIndex,
+  input: SearchBookInput,
+): string {
+  const limit = input.limit ?? SEARCH_LIMIT_DEFAULT;
+  const hits = searchBook(index, input.query, limit);
+  return renderSearchHits(hits, input.query);
 }

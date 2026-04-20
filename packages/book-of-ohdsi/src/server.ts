@@ -14,23 +14,31 @@ import {
 import type { Manifest } from "./manifest.js";
 import { loadManifest } from "./manifest.js";
 import { listResources, readResource } from "./resources.js";
+import { buildSearchIndex, type SearchIndex } from "./search.js";
 import {
   LIST_CHAPTERS_TOOL_NAME,
   READ_CHAPTER_TOOL_NAME,
+  SEARCH_BOOK_TOOL_NAME,
   UnknownChapterError,
   callReadChapter,
+  callSearchBook,
   listChaptersTool,
   parseListChaptersInput,
   parseReadChapterInput,
+  parseSearchBookInput,
   readChapterTool,
   renderListChapters,
+  searchBookTool,
 } from "./tools.js";
 
 export const RESOURCE_NOT_FOUND_CODE = -32002;
 export const SERVER_NAME = "book-of-ohdsi";
 export const SERVER_VERSION = "0.1.0";
 
-export function createServer(manifest: Manifest): Server {
+export function createServer(
+  manifest: Manifest,
+  searchIndex: SearchIndex,
+): Server {
   const server = new Server(
     { name: SERVER_NAME, version: SERVER_VERSION },
     { capabilities: { resources: {}, tools: {} } },
@@ -54,7 +62,7 @@ export function createServer(manifest: Manifest): Server {
   });
 
   server.setRequestHandler(ListToolsRequestSchema, () => ({
-    tools: [listChaptersTool, readChapterTool],
+    tools: [listChaptersTool, readChapterTool, searchBookTool],
   }));
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
@@ -80,6 +88,11 @@ export function createServer(manifest: Manifest): Server {
         throw error;
       }
     }
+    if (name === SEARCH_BOOK_TOOL_NAME) {
+      const input = parseSearchBookInput(args);
+      const text = callSearchBook(searchIndex, input);
+      return { content: [{ type: "text", text }] };
+    }
     throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
   });
 
@@ -94,7 +107,8 @@ export function isMainModule(): boolean {
 
 async function main(): Promise<void> {
   const manifest = await loadManifest();
-  const server = createServer(manifest);
+  const searchIndex = await buildSearchIndex(manifest);
+  const server = createServer(manifest, searchIndex);
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }
