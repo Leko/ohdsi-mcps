@@ -1,16 +1,9 @@
-import { execFile } from "node:child_process";
-import { readFile } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-import { promisify } from "node:util";
-import { parse as parseYaml } from "yaml";
 import { z } from "zod";
-
-const execFileAsync = promisify(execFile);
-
-const bookdownYamlSchema = z.object({
-  rmd_files: z.array(z.string()),
-});
+import {
+  CHAPTER_BODIES,
+  RMD_FILES,
+  SOURCE_COMMIT,
+} from "./generated/content.js";
 
 export const chapterEntrySchema = z.object({
   slug: z.string().min(1),
@@ -26,17 +19,9 @@ export type Manifest = {
     owner: "OHDSI";
     repo: "TheBookOfOhdsi";
     commit: string;
-    path: string;
   };
   chapters: ChapterEntry[];
 };
-
-const vendorDir = resolve(
-  dirname(fileURLToPath(import.meta.url)),
-  "..",
-  "vendor",
-  "TheBookOfOhdsi",
-);
 
 export function stripYamlFrontmatter(text: string): string {
   if (!text.startsWith("---")) return text;
@@ -69,44 +54,37 @@ export function slugOf(filename: string): string {
   return filename.replace(/\.Rmd$/i, "");
 }
 
-async function readBookdownConfig(): Promise<string[]> {
-  const yamlText = await readFile(join(vendorDir, "_bookdown.yml"), "utf8");
-  const parsed = bookdownYamlSchema.parse(parseYaml(yamlText));
-  return parsed.rmd_files;
+function bodyOf(filename: string): string {
+  const body = CHAPTER_BODIES[filename];
+  if (typeof body !== "string") {
+    throw new Error(
+      `Chapter ${filename} is missing from the generated content module. Regenerate via \`npm run generate-content\`.`,
+    );
+  }
+  return body;
 }
 
-async function readHeadCommit(): Promise<string> {
-  const result = await execFileAsync("git", ["rev-parse", "HEAD"], {
-    cwd: vendorDir,
-  });
-  return result.stdout.trim();
-}
-
-export async function loadManifest(): Promise<Manifest> {
-  const rmdFiles = await readBookdownConfig();
-  const chapters: ChapterEntry[] = [];
-  for (const [order, filename] of rmdFiles.entries()) {
+export function loadManifest(): Manifest {
+  const chapters: ChapterEntry[] = RMD_FILES.map((filename, order) => {
     const slug = slugOf(filename);
-    const body = await readFile(join(vendorDir, filename), "utf8");
-    chapters.push({
+    const body = bodyOf(filename);
+    return {
       slug,
       filename,
       title: extractTitle(body, slug),
       order,
-    });
-  }
-  const commit = await readHeadCommit();
+    };
+  });
   return {
     source: {
       owner: "OHDSI",
       repo: "TheBookOfOhdsi",
-      commit,
-      path: vendorDir,
+      commit: SOURCE_COMMIT,
     },
     chapters,
   };
 }
 
-export async function loadChapterBody(entry: ChapterEntry): Promise<string> {
-  return readFile(join(vendorDir, entry.filename), "utf8");
+export function loadChapterBody(entry: ChapterEntry): string {
+  return bodyOf(entry.filename);
 }

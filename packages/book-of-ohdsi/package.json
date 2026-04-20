@@ -10,9 +10,6 @@
   "main": "./dist/server.js",
   "files": [
     "dist",
-    "vendor/TheBookOfOhdsi/_bookdown.yml",
-    "vendor/TheBookOfOhdsi/*.Rmd",
-    "vendor/TheBookOfOhdsi/LICENSE",
     "NOTICE",
     "README.md"
   ],
@@ -20,6 +17,7 @@
     "node": ">=24.13.0"
   },
   "scripts": {
+    "generate-content": "tsx scripts/generate-content.ts",
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/server.ts",
     "test": "vitest run",

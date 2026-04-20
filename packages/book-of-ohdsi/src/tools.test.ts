@@ -18,7 +18,6 @@ const fakeManifest: Manifest = {
     owner: "OHDSI",
     repo: "TheBookOfOhdsi",
     commit: "deadbeef".repeat(5),
-    path: "/fake/path",
   },
   chapters: [
     {
