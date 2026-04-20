@@ -14,6 +14,7 @@
     "@hono/mcp": "^0.2.5",
     "@ohdsi-mcps/book-of-ohdsi": "^0.1.0",
     "@ohdsi-mcps/ohdsi-weekly-digest": "^0.1.0",
+    "@ohdsi-mcps/omop-cdm": "^0.1.0",
     "hono": "^4.12.14"
   },
   "devDependencies": {

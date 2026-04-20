@@ -1,3 +1,6 @@
 [submodule "packages/book-of-ohdsi/vendor/TheBookOfOhdsi"]
 	path = packages/book-of-ohdsi/vendor/TheBookOfOhdsi
 	url = https://github.com/OHDSI/TheBookOfOhdsi.git
+[submodule "packages/omop-cdm/vendor/CommonDataModel"]
+	path = packages/omop-cdm/vendor/CommonDataModel
+	url = https://github.com/OHDSI/CommonDataModel.git

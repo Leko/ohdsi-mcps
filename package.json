@@ -11,6 +11,7 @@
   "workspaces": [
     "packages/book-of-ohdsi",
     "packages/ohdsi-weekly-digest",
+    "packages/omop-cdm",
     "packages/cf-worker"
   ],
   "scripts": {

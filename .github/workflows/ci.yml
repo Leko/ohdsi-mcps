@@ -7,6 +7,24 @@ on:
     branches: [main]
 
 jobs:
+  knip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Dead-code and unused-export check
+        run: npm run knip
+
   build:
     runs-on: ubuntu-latest
 
@@ -48,6 +66,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run tests
+        run: npm run test
+
       - name: Run tests with coverage
         env:
           OMOPHUB_API_KEY: ${{ secrets.OMOPHUB_API_KEY }}
@@ -57,7 +78,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage
-          path: packages/book-of-ohdsi/coverage/
+          path: |
+            packages/book-of-ohdsi/coverage/
+            packages/ohdsi-weekly-digest/coverage/
+            packages/omop-cdm/coverage/
 
   coverage-report:
     runs-on: ubuntu-latest
@@ -79,23 +103,47 @@ jobs:
         with:
           script: |
             const fs = require('fs');
+            const path = require('path');
 
-            // Read coverage summary
-            const summaryPath = 'coverage/coverage-summary.json';
-            if (!fs.existsSync(summaryPath)) {
-              console.log('Coverage summary not found');
+            const fmt = (pct) => `${pct.toFixed(2)}%`;
+
+            function findSummaries(root) {
+              const results = [];
+              if (!fs.existsSync(root)) return results;
+              for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
+                const full = path.join(root, entry.name);
+                if (entry.isDirectory()) {
+                  results.push(...findSummaries(full));
+                } else if (entry.name === 'coverage-summary.json') {
+                  results.push(full);
+                }
+              }
+              return results;
+            }
+
+            const summaries = findSummaries('coverage').sort();
+            if (summaries.length === 0) {
+              console.log('No coverage summaries found');
               return;
             }
 
-            const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
-            const total = summary.total;
-
-            // Format percentage
-            const fmt = (pct) => `${pct.toFixed(2)}%`;
-
-            // Build markdown table
-            const table = `
-            ## Coverage Report
+            const sections = summaries.map((file) => {
+              const summary = JSON.parse(fs.readFileSync(file, 'utf8'));
+              const total = summary.total;
+              const pkg =
+                file
+                  .replace(/^coverage\//, '')
+                  .replace(/\/coverage\/coverage-summary\.json$/, '')
+                  .replace(/^packages\//, '') || 'root';
+              const fileRows = Object.entries(summary)
+                .filter(([key]) => key !== 'total')
+                .map(([f, data]) => {
+                  const name = f.replace(process.cwd() + '/', '');
+                  return `| ${name} | ${fmt(data.statements.pct)} | ${fmt(data.branches.pct)} | ${fmt(data.functions.pct)} | ${fmt(data.lines.pct)} |`;
+                })
+                .join('\n');
+              return `
+            ### \`${pkg}\`
 
             | Metric | Coverage |
             |--------|----------|
@@ -109,16 +157,13 @@ jobs:
 
             | File | Statements | Branches | Functions | Lines |
             |------|------------|----------|-----------|-------|
-            ${Object.entries(summary)
-              .filter(([key]) => key !== 'total')
-              .map(([file, data]) => {
-                const name = file.replace(process.cwd() + '/', '');
-                return `| ${name} | ${fmt(data.statements.pct)} | ${fmt(data.branches.pct)} | ${fmt(data.functions.pct)} | ${fmt(data.lines.pct)} |`;
-              })
-              .join('\n')}
+            ${fileRows}
 
             </details>
             `;
+            });
+
+            const table = `## Coverage Report\n${sections.join('\n')}`;
 
             // Find existing comment
             const { data: comments } = await github.rest.issues.listComments({
