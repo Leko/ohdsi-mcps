@@ -7,6 +7,14 @@ import { createOhdsiWeeklyDigestServer } from "@ohdsi-mcps/ohdsi-weekly-digest/b
 import { createOmopCdmServer } from "@ohdsi-mcps/omop-cdm/bundle";
 import { Hono } from "hono";
 
+import {
+  deriveClientId,
+  eventsFromJsonRpc,
+  isAnalyticsEnabled,
+  sendMeasurementProtocolEvents,
+  type Env,
+} from "./analytics.js";
+
 type Mcp = {
   slug: string;
   createServer: () => Promise<McpServer>;
@@ -46,9 +54,58 @@ function getSession(mcp: Mcp): McpSession {
   return session;
 }
 
-const app = new Hono();
+const app = new Hono<{ Bindings: Env }>();
 
 app.get("/health", (c) => c.json({ ok: true }));
+
+// Analytics middleware: fires after the MCP response is produced so
+// duration_ms and httpStatus are available. Uses waitUntil() to avoid
+// blocking the response.
+app.use("/:slug/mcp", async (c, next) => {
+  if (!isAnalyticsEnabled(c.env, c.req.raw)) {
+    return next();
+  }
+
+  const startedAt = Date.now();
+  const slug = c.req.param("slug");
+  const ip =
+    c.req.header("cf-connecting-ip") ??
+    c.req.header("x-forwarded-for") ??
+    "unknown";
+  const userAgent = c.req.header("user-agent") ?? "";
+  const sessionId = c.req.header("mcp-session-id") ?? null;
+  const timestampMicros = startedAt * 1000;
+
+  // Clone the body before @hono/mcp consumes the request stream.
+  let message: unknown;
+  try {
+    const text = await c.req.raw.clone().text();
+    if (text) message = JSON.parse(text) as unknown;
+  } catch {
+    // non-JSON bodies (GET SSE requests) — no analytics event needed
+  }
+
+  await next();
+
+  const durationMs = Date.now() - startedAt;
+  const events = eventsFromJsonRpc(message, {
+    serverSlug: slug,
+    sessionId,
+    durationMs,
+    httpStatus: c.res.status,
+  });
+
+  if (events.length === 0) return;
+
+  const salt = c.env.ANALYTICS_SALT ?? "";
+  const clientIdPromise = deriveClientId(ip, userAgent, slug, salt);
+
+  c.executionCtx.waitUntil(
+    clientIdPromise.then((clientId) =>
+      sendMeasurementProtocolEvents(c.env, clientId, timestampMicros, events),
+    ),
+  );
+});
 
 for (const mcp of MCP_REGISTRY) {
   app.all(`/${mcp.slug}/mcp`, async (c) => {
