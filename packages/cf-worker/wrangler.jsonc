@@ -6,5 +6,16 @@
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "enabled": true
+  },
+  "vars": {
+    // Set to "false" to disable analytics globally without redeploying.
+    "ANALYTICS_ENABLED": "true",
+    // Public GA4 measurement ID (e.g. "G-XXXXXXXXXX").
+    // Override with: wrangler secret put GA_MEASUREMENT_ID
+    // or set in .dev.vars for local development.
+    "GA_MEASUREMENT_ID": ""
   }
+  // Secrets (set via `wrangler secret put`; never commit values):
+  //   GA_API_SECRET   — GA4 Measurement Protocol API secret
+  //   ANALYTICS_SALT  — Random 32-byte hex pepper for client_id hashing
 }
